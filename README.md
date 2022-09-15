@@ -6,7 +6,7 @@ Usage: `console.log(table(array))`
 
 The function supports a single argument. This is the data for the table. Actually, only arrays of objects are supported.
 
-<div style="font-family: monospace; font-size:1em; line-height:1em; margin-top:2em; padding:1em; overflow-x:auto; overflow-y:hidden"><pre>
+<div style="font-family: monospace; font-size:0.8rem!important; line-height:0.8rem!important; margin-top:2em; padding:1em; overflow-x:auto; overflow-y:hidden"><pre>
 
 ┌────┬─────────────┬─────────────────────────────┬─────────┐
 │ #  │ branch      │ as of                       │ rule    │
