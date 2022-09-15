@@ -6,7 +6,7 @@ Usage: `console.log(table(array))`
 
 The function supports a single argument. This is the data for the table. Actually, only arrays of objects are supported.
 
-<pre style="font-family: monospace; font-size:0.8rem!important; line-height:0.8rem!important; margin-top:2em; padding:1em; overflow-x:auto; overflow-y:hidden">
+<pre>
 ┌────┬─────────────┬─────────────────────────────┬─────────┐
 │ #  │ branch      │ as of                       │ rule    │
 ├────┼─────────────┼─────────────────────────────┼─────────┤
@@ -19,3 +19,14 @@ The function supports a single argument. This is the data for the table. Actuall
 │ 4. │ alpha       │ 2022-06-25T22:39:00.508816Z │ default │
 └────┴─────────────┴─────────────────────────────┴─────────┘
 </pre>
+
+<style>
+.markdown-body pre p {
+  font-family:monospace;
+  font-size: 0.8rem;
+  line-height: 0.8rem;
+  margin-top:2em; 
+  padding:1em; 
+  overflow-x:auto; 
+  overflow-y:hidden
+</style>
