@@ -1,0 +1,24 @@
+{
+  "name": "console-table-substitute",
+  "version": "1.0.0",
+  "description": "Simplified substitute for console.table(), e.g. for Cloudflare workers.",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ergberg/console-table.git"
+  },
+  "keywords": [
+    "console",
+    "lable",
+    "replacement"
+  ],
+  "author": "ergberg",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ergberg/console-table-substitute/issues"
+  },
+  "homepage": "https://github.com/ergberg/console-table-substitute#readme"
+}
