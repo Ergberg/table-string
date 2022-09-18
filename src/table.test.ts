@@ -1,8 +1,6 @@
 import { double, frame, table } from "./table.js";
 import chalk from "chalk";
 
-frame.characters = double.characters;
-
 (() => {
   let runs = 0;
   let failed = 0;
@@ -24,10 +22,10 @@ frame.characters = double.characters;
       "│ Values  │\n" +
       "├─────────┤\n" +
       "│ apples  │\n" +
-      "│ oranges│\n" +
+      "│ oranges │\n" +
       "│ bananas │\n" +
       "└─────────┘",
-    ["apples", "🗞ranges", "bananas"]
+    ["apples", "oranges", "bananas"]
   );
 
   test(
@@ -222,28 +220,27 @@ frame.characters = double.characters;
 
   test(
     "\n" +
-      "┌─────────┬───┬────────┐\n" +
-      "│    v    │ w │ Values │\n" +
-      "├─────────┼───┼────────┤\n" +
-      "│         │   │ apples │\n" +
-      "│ oranges │   │        │\n" +
-      "│         │   │        │\n" +
-      "│         │   │        │\n" +
-      "│       5 │ 6 │        │\n" +
-      "│         │ 5 │        │\n" +
-      "└─────────┴───┴────────┘",
-    ["apples", { v: "oranges" }, null, /gg/, { v: 5, w: 6 }, { w: BigInt(5) }]
+      "┌─────────┬──────────┬────────┐\n" +
+      "│  Goods  │ Services │ Values │\n" +
+      "├─────────┼──────────┼────────┤\n" +
+      "│         │          │ apples │\n" +
+      "│ oranges │          │        │\n" +
+      "│         │          │        │\n" +
+      "│         │ John Doe │        │\n" +
+      "│         │          │        │\n" +
+      "│       5 │        6 │        │\n" +
+      "│         │        5 │        │\n" +
+      "└─────────┴──────────┴────────┘",
+    [
+      "apples",
+      { Goods: "oranges" },
+      null,
+      { Services: new Person("John", "Doe") },
+      /gg/,
+      { Goods: 5, Services: 6 },
+      { Services: BigInt(5) },
+    ]
   );
-
-  test("", {
-    apples: { v: "oranges" },
-    oranges: null,
-    x: 4,
-    foo: / gg /,
-    bla: { fn: "ho", ln: new Person("😄", "Doe") },
-    bar: { v: 5 },
-    foobar: { v: BigInt(5) },
-  });
 
   failed && console.log(`${runs} tests ran, ${failed} failed.`);
   !failed && console.log(`All ${runs} tests passed.`);
