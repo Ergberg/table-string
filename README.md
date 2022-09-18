@@ -1,21 +1,29 @@
-# console-table
+# table-string
 
-The function `console.table` is not defined on Cloudflare workers. This is a simplified substitute.
+Initially, I was looking for a substitute for `console.table()` because I missed that function in Cloudflare workers.
 
-Usage: `console.log(table(array))`
 
-The function supports a single argument. This is the data for the table. Actually, only arrays of objects are supported.
+So table-string is a function initially inspired by console.table but with the following main differences:
 
-<pre style="font-family: monospace; font-size:0.8rem!important; line-height:0.8rem!important; margin-top:2em; padding:1em; overflow-x:auto; overflow-y:hidden">
-┌────┬─────────────┬─────────────────────────────┬─────────┐
-│ #  │ branch      │ as of                       │ rule    │
-├────┼─────────────┼─────────────────────────────┼─────────┤
-│ 1. │ main        │ 2022-09-11T17:05:13.438212Z │         │
-├────┼─────────────┼─────────────────────────────┼─────────┤
-│ 2. │ development │ 2022-09-09T15:46:44.851433Z │         │
-├────┼─────────────┼─────────────────────────────┼─────────┤
-│ 3. │ main        │ 2022-09-08T22:19:05.490083Z │ prod    │
-├────┼─────────────┼─────────────────────────────┼─────────┤
-│ 4. │ alpha       │ 2022-06-25T22:39:00.508816Z │ default │
-└────┴─────────────┴─────────────────────────────┴─────────┘
-</pre>
+* First of all, it does not print anything to the console but returns a string.
+
+## Targeted towards CLI output, not debugging
+
+While I was on it, I realized that the output of `console.table()` looks rather technical. It is more suitable for developers debugging their code than for users of a CLI that expect informative tables.
+
+### Less technical
+
+I deliberately did not mirror some features of `console.table()`, because they give the output a rathe technical, debuggy look:  
+ * there is no coloring of values based on their JavaScript type
+ * it does not print quotes around strings or 'm's after BigInts
+ * it does not show values that are of type "function"
+ * for arrays, the index column is only shown if explicitly provided
+ * the index column has no header by default 
+ * null values are not shown
+
+ ### More functional
+
+ * It provides full control over table headings and alignment.
+ * It is compatible with ANSI color sequences. For example, you can use the chalk package to color strings and it wont harm the layout.
+
+ ## Examples
