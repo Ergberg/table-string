@@ -6,6 +6,7 @@ Initially, I was looking for a substitute for `console.table()` because I missed
 So table-string is a function initially inspired by console.table but with the following main differences:
 
 * First of all, it does not print anything to the console but returns a string.
+* More important: Its output looks less technical. It is focused on making it simple to generate informative tables for CLIs. 
 
 ## Targeted towards CLI output, not debugging
 
