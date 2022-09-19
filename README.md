@@ -7,7 +7,7 @@ So table-string is a function originally inspired by `console.table()` but with 
 * First, it doesn't output anything to the console, but returns a string.
 * More importantly its output looks less technical. It is aimed at simplifying the creation of meaningful tables for CLIs. 
 
-# Examples
+## Examples
 
 We will generate a table for this array:
 
@@ -20,13 +20,16 @@ const data = [
 ],
 ```
 
-**What you get without tableString:** On `node.js` `console.table(data)` produces a table that looks very debug-like.
+### What you get without tableString
+On `node.js` `console.table(data)` produces a table that looks very debug-like:
 ![console.table output](./images/console.table.png)
 
-**What you might be looking for:** The same structure with `tableString(data)` looks much better. 
+### What you might be looking for
+The same structure with `tableString(data)` looks much cleaner:
 ![tableString output](./images/tableString1.png)
 
-**What else `tableSting` can do:** Adding two parameters allows us to finer control headings and frame color: 
+### What else `tableSting` can do 
+Adding two parameters allows us to finer control headings and frame color: 
 ![tableString output with options](./images/tableString2.png) 
 ```
 tableString(data,
