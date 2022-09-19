@@ -27,6 +27,18 @@ I intentionally left out some features of `console.table()` because they give th
 
  ## Examples
 
- The picture below shows the `node.js` output of `console.log(tableString(x))`(upper table) and `console.table(x)` (lower table).
+ The picture below shows the `node.js` output of `console.log(tableString(data, [{ price: "Price" }, { fruit: "Fruit" }], {alignTableHeadings: "left", frameChalk: chalk.white.bgBlack(" ")}))`(upper table) and `console.table(data)` (lower table).
 
  ![comparison with console.table](./tables.png) 
+
+Data is defined as 
+```
+[
+  { price: 1.99, fruit: chalk.green("Apples") },
+  { price: 3.99, fruit: chalk.red("Strawberries") },
+  { price: 0.99, fruit: chalk.bgBlue.yellow("Bananas") },
+  { price: 12.99, fruit: chalk.blue.bgWhite("Bilberries") },
+]
+```
+The additional parameters in the call to `tableString()` control the column headers and the colors of the frame.
+

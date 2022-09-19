@@ -183,12 +183,12 @@ import chalk from "chalk";
       "\x1B[37m\x1B[40m│  0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│ 12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m└───────┴─────────────┘\x1B[49m\x1B[39m",
-    (data = [
+    [
       { price: 1.99, fruit: chalk.green("Apples") },
       { price: 3.99, fruit: chalk.red("Strawberries") },
       { price: 0.99, fruit: chalk.bgBlue.yellow("Bananas") },
       { price: 12.99, fruit: chalk.blue.bgWhite("Bilberries") },
-    ]),
+    ],
     [{ price: "Price" }, { fruit: "Fruit" }],
     {
       alignTableHeadings: "left",
@@ -205,7 +205,7 @@ import chalk from "chalk";
       "│ 2 │ oranges │\n" +
       "│ 3 │ bananas │\n" +
       "└───┴─────────┘",
-    ["apples", "oranges", "bananas"],
+    (data = ["apples", "oranges", "bananas"]),
     [{ column: "Values", align: "right" }],
     { alignTableHeadings: "right", index: [...data.keys()].map((i) => i + 1) }
   );
