@@ -27,4 +27,6 @@ I intentionally left out some features of `console.table()` because they give th
 
  ## Examples
 
- 
+ The picture below shows the `node.js` output of `console.log(tableString(x))`(upper table) and `console.table(x)` (lower table).
+
+ ![comparison with console.table](./tables.png) 
