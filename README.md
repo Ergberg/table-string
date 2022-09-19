@@ -23,6 +23,8 @@ I intentionally left out some features of `console.table()` because they give th
  ### More functionality
 
  * It provides full control over table headings and alignment.
- * It is compatible with ANSI color sequences. For example, you can use the chalk package to color strings without affecting the layout.
+ * It is compatible with ANSI color sequences. For example, you can use the chalk package to color strings without affecting the layout. Even better: padding recognizes background colors and extends them. You can even define a chalk for the frame of the table.   
 
  ## Examples
+
+ 

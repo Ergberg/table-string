@@ -1,4 +1,4 @@
-import stripAnsi from "strip-ansi";
+import ansiRegex from "ansi-regex";
 
 /* These are the default chars for the table frame*/
 export let frame = {
@@ -42,11 +42,11 @@ export const ascii = {
  *   - for arrays, the index column is only shown if explicitly provided
  *   - the index column by default has no header
  *   - null values are not shown
- * 
+ *
  *  Non goals:
  *    - support for emojis. As of now, Emojis do not seem to be well supported in monospaced fonts. Emojis tend to break table spacing.
  *    - Dynamic effects on TTYs based on repositioning the cursor. The result of this function should be a simple string that can be printed to a text file. ANSI color escape sequences are fine and supported.
- *  
+ *
  * @param data The content for the table. An array or an object.
  * @param columns Optional column data to control selection, ordering, heading and alignment. {key: "col", heading: "Column"} can be shortened to {col: "Column"}, {column: "column"} can be abbreviated as "column".
  * @param index Data for the index column for arrays e.g. [...o.keys()].map((i) => i + 1)
@@ -61,7 +61,12 @@ export function table(
     | { [index: string]: string }
   )[],
   options?: {
-    alignHeadings?: "left" | "center" | "right";
+    alignTableHeadings?: "left" | "center" | "right";
+    // when an Object is converted into an array of properties, how to sort those?
+    propertyCompareFunction?: (a: any, b: any) => number;
+    // Want to color the frame? Set frameChalk:chalk.bgBlue.yellow("")
+    frameChalk: string;
+    // an explicit index column
     index?: any[];
   }
 ): string {
@@ -102,15 +107,15 @@ export function table(
             : "left";
         switch (align) {
           case "center":
-            return padBoth("" + value, columnWidth[key], fill);
+            return padBoth(value, columnWidth[key], fill);
           case "right":
-            return padStart("" + value + fill, columnWidth[key], fill);
+            return padStart(value + fill, columnWidth[key], fill);
           default:
-            return padEnd(fill + value, columnWidth[key], fill);
+            return padEnd(value, columnWidth[key], fill);
         }
       }
 
-      return `\n${first}${columns.reduce(
+      return `\n${frameChalkStart}${first}${columns.reduce(
         (res, key: string, columnIndex) =>
           res +
           pad(
@@ -118,12 +123,13 @@ export function table(
             fill,
             key,
             rowIndex === -1
-              ? options?.alignHeadings ?? "center"
+              ? options?.alignTableHeadings ?? "center"
               : alignments[columnIndex]
           ) +
+          (obj !== undefined ? frameChalkStart : "") +
           (columnIndex !== columns.length - 1 ? separator : end),
         ""
-      )}`;
+      )}${frameChalkEnd}`;
     }
   }
 
@@ -194,14 +200,14 @@ export function table(
 
   let columnWidth: Record<string, number> = {};
   columns.forEach((key: string, idx) => {
-    columnWidth[key] = length(headings[idx]) + 2;
+    columnWidth[key] = ansiDestruct(headings[idx]).width + 2;
   });
   data.forEach((row, rowIdx) => {
     columns.forEach(
       (key: string) =>
         (columnWidth[key] = Math.max(
           columnWidth[key],
-          length("  " + value(row, key, rowIdx))
+          ansiDestruct("  " + value(row, key, rowIdx)).width
         ))
     );
   });
@@ -209,21 +215,62 @@ export function table(
   const header = {};
   columns.forEach((key: string, idx) => (header[key] = headings[idx]));
 
-  function length(s: string) {
-    return stripAnsi(s).length;
+  function ansiDestruct(value) {
+    const s = "" + value;
+    const length = s.length;
+    const ansis = [...s.matchAll(ansiRegex())];
+    const width =
+      length - ansis.reduce((len, match) => len + match[0].length, 0);
+    if (ansis.length >= 2) {
+      let [first, start, last, end] = [0, 0, ansis.length - 1, length];
+      while (first < ansis.length / 2 && ansis[first].index === start)
+        start += ansis[first++][0].length;
+      while (
+        last > (ansis.length - 1) / 2 &&
+        ansis[last].index + ansis[last][0].length === end
+      )
+        end = ansis[last--].index;
+      if (first > 0 && last < ansis.length - 1) {
+        return {
+          width,
+          first: ansis
+            .slice(0, first)
+            .reduce((res, match) => res + match[0], ""),
+          trimmed: s.slice(
+            ansis[--first].index + ansis[first][0].length,
+            ansis[++last].index
+          ),
+          last: ansis.slice(last).reduce((res, match) => res + match[0], ""),
+        };
+      }
+    }
+    return { width, first: "", trimmed: s, last: "" };
   }
 
-  function padEnd(s: string, width: number, fill: string) {
-    return s.padEnd(s.length - length(s) + width, fill);
+  function padEnd(value, maxWidth: number, fill: string) {
+    const { width, first, trimmed, last } = ansiDestruct(value);
+    return (
+      first +
+      (fill + trimmed).padEnd(trimmed.length - width + maxWidth, fill) +
+      last
+    );
   }
-  function padStart(s: string, width: number, fill: string) {
-    return s.padStart(s.length - length(s) + width, fill);
+  function padStart(value, maxWidth: number, fill: string) {
+    const { width, first, trimmed, last } = ansiDestruct(value);
+    return (
+      first + trimmed.padStart(trimmed.length - width + maxWidth, fill) + last
+    );
   }
-  function padBoth(s: string, width: number, fill: string) {
-    const w = s.length - length(s) + width;
-    const start = "".padStart(Math.trunc((w - s.length) / 2), fill);
-    return (start + s).padEnd(w, fill);
+  function padBoth(value, maxWidth: number, fill: string) {
+    const { width, first, trimmed, last } = ansiDestruct(value);
+    const w = trimmed.length - width + maxWidth;
+    const start = first.padStart(Math.trunc((w - trimmed.length) / 2), fill);
+    return (start + trimmed).padEnd(w, fill) + last;
   }
+
+  const { first: frameChalkStart, last: frameChalkEnd } = ansiDestruct(
+    options?.frameChalk ?? ""
+  );
 
   return genTable(data);
 }

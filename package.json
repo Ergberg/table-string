@@ -25,8 +25,8 @@
   },
   "homepage": "https://github.com/ergberg/console-table-substitute#readme",
   "dependencies": {
-    "chalk": "^4.1.2",
-    "strip-ansi": "^7.0.1"
+    "ansi-regex": "^6.0.1",
+    "chalk": "^4.1.2"
   },
   "devDependencies": {
     "@types/source-map-support": "^0.5.6",

@@ -9,6 +9,7 @@ import chalk from "chalk";
   function test(expected: string, data, key?, options?) {
     ++runs;
     const got = table(data, key, options);
+    console.log(got);
     if (got !== expected) {
       console.table(data);
       console.error({ expected, got });
@@ -174,34 +175,39 @@ import chalk from "chalk";
 
   test(
     "\n" +
-      "┌───┬──────────┐\n" +
-      "│   │  Goods   │\n" +
-      "├───┼──────────┤\n" +
-      "│ 0 │ \x1B[32mapples\x1B[39m   │\n" +
-      "│ 1 │ \x1B[31mtomatoes\x1B[39m │\n" +
-      "│ 2 │ \x1B[33mbananas\x1B[39m  │\n" +
-      "└───┴──────────┘",
+      "\x1B[37m\x1B[40m┌───────┬──────────────┐\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│ Price \x1B[37m\x1B[40m│ Fruit        \x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m├───────┼──────────────┤\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│  1.99 \x1B[37m\x1B[40m│\x1B[32m Apples       \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│  3.99 \x1B[37m\x1B[40m│\x1B[31m Strawberries \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│  0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│ 12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m└───────┴─────────────┘\x1B[49m\x1B[39m",
     (data = [
-      chalk.green("apples"),
-      chalk.red("tomatoes"),
-      chalk.yellow("bananas"),
+      { price: 1.99, fruit: chalk.green("Apples") },
+      { price: 3.99, fruit: chalk.red("Strawberries") },
+      { price: 0.99, fruit: chalk.bgBlue.yellow("Bananas") },
+      { price: 12.99, fruit: chalk.blue.bgWhite("Bilberries") },
     ]),
-    [{ column: "Values", heading: "Goods" }],
-    { index: [...data.keys()] }
+    [{ price: "Price" }, { fruit: "Fruit" }],
+    {
+      alignTableHeadings: "left",
+      frameChalk: chalk.white.bgBlack(" "),
+    }
   );
 
   test(
     "\n" +
-      "┌─────────┐\n" +
-      "│  Values │\n" +
-      "├─────────┤\n" +
-      "│  apples │\n" +
-      "│ oranges │\n" +
-      "│ bananas │\n" +
-      "└─────────┘",
+      "┌───┬─────────┐\n" +
+      "│   │  Values │\n" +
+      "├───┼─────────┤\n" +
+      "│ 1 │ apples  │\n" +
+      "│ 2 │ oranges │\n" +
+      "│ 3 │ bananas │\n" +
+      "└───┴─────────┘",
     ["apples", "oranges", "bananas"],
     [{ column: "Values", align: "right" }],
-    { alignHeadings: "right" }
+    { alignTableHeadings: "right", index: [...data.keys()].map((i) => i + 1) }
   );
 
   test(
