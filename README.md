@@ -20,13 +20,14 @@ const data = [
 ],
 ```
 
-On `node.js` `console.table(data)` produces this:
+**What you get without tableString:** On `node.js` `console.table(data)` produces a table that looks very debug-like.
 ![console.table output](./images/console.table.png)
 
-The same structure with tableString(data) renders this:
+**What you might be looking for:** The same structure with `tableString(data)` looks much better. 
 ![tableString output](./images/tableString1.png)
 
-Adding two parameters allows us to finer control headings and frame color: 
+**What else `tableSting` can do:** Adding two parameters allows us to finer control headings and frame color: 
+![tableString output with options](./images/tableString2.png) 
 ```
 tableString(data,
   [{ price: "Price in $" }, { fruit: "Fruit" }],
@@ -35,8 +36,6 @@ tableString(data,
   }
 );
 ```
-and wie get this:
-![tableString output with options](./images/tableString2.png) 
 
 
 ## Geared for CLI output, not debugging
