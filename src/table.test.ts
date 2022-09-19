@@ -1,4 +1,4 @@
-import { double, frame, table } from "./table.js";
+import { table } from "./table.js";
 import chalk from "chalk";
 
 (() => {
@@ -8,6 +8,7 @@ import chalk from "chalk";
 
   function test(expected: string, data, key?, options?) {
     ++runs;
+    console.table(data);
     const got = table(data, key, options);
     console.log(got);
     if (got !== expected) {
@@ -183,19 +184,19 @@ import chalk from "chalk";
       "\x1B[37m\x1B[40m│  0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│ 12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m└───────┴─────────────┘\x1B[49m\x1B[39m",
-    [
+    (data = [
       { price: 1.99, fruit: chalk.green("Apples") },
       { price: 3.99, fruit: chalk.red("Strawberries") },
       { price: 0.99, fruit: chalk.bgBlue.yellow("Bananas") },
       { price: 12.99, fruit: chalk.blue.bgWhite("Bilberries") },
-    ],
-    [{ price: "Price" }, { fruit: "Fruit" }],
+    ]),
+    [{ price: "Price in $" }, { fruit: "Fruit" }],
     {
-      alignTableHeadings: "left",
       frameChalk: chalk.white.bgBlack(" "),
     }
   );
 
+  console.log(table(data));
   test(
     "\n" +
       "┌───┬─────────┐\n" +
