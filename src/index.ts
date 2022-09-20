@@ -1,2 +1,1 @@
-export { table } from "./table"
-
+export { tableString } from "./tableString";

@@ -2,10 +2,11 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "Node",
+    "esModuleInterop": true,
     "target": "esnext",
+    "sourceMap": true,
     "declaration": true,
-    "outDir": "./dist",
-    "allowSyntheticDefaultImports": true
+    "outDir": "./dist"
   },
   "include": ["src/**/*"]
 }

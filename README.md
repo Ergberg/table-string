@@ -7,7 +7,7 @@ So table-string is a function originally inspired by `console.table()` but with 
 * First, it doesn't output anything to the console, but returns a string.
 * More importantly its output looks less technical. It is aimed at simplifying the creation of meaningful tables for CLIs. 
 
-## Examples
+## Example
 
 We will generate a table for this array:
 
@@ -29,7 +29,7 @@ The same structure with `tableString(data)` looks much cleaner:
 ![tableString output](./images/tableString1.png)
 
 ### What else `tableSting` can do 
-Adding two parameters allows us to finer control headings and frame color: 
+Adding two parameters allows us to finer control over columns and table options: 
 ![tableString output with options](./images/tableString2.png) 
 ```
 tableString(data,
@@ -54,9 +54,39 @@ I intentionally left out some features of `console.table()` because they give th
  * for arrays, the index column is only included if explicitly specified
  * the index column has no header by default 
  
- ### More functionality
+### More functionality
 
- * It provides full control over table headings and alignment.
- * It is compatible with ANSI color sequences. For example, you can use the chalk package to color strings without affecting the layout. Even better: padding recognizes background colors and extends them. You can even define a chalk for the frame of the table.   
+The table-string package supports more options compared to `console.table`:
+* It provides full control over table headings and alignment.
+* It is compatible with ANSI color sequences. For example, you can use the chalk package to color strings without affecting the layout. Even better: padding recognizes background colors and extends them. You can even define a chalk for the frame of the table.   
 
+### Non goals:
 
+Other table packages exist with different goals. The table-string package does not share them all. Here are explicit non-goals 
+
+ *  No support for emojis. As of now, Emojis do not seem to be well supported in monospaced fonts. Emojis tend to break table spacing.
+ *  No dynamic effects on TTYs based on repositioning the cursor. The result of the `tableString` function is a simple string that can be printed to a text file. 
+
+## Configuration
+
+### Column Options
+
+#### Properties
+
+##### column
+
+##### heading
+
+##### alignment
+
+#### Short Forms
+
+### Table Options
+
+#### alignTableHeadings
+
+#### frameChalk
+
+#### propertyCompareFunction
+
+#### index

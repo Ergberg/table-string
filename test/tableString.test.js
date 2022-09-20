@@ -1,24 +1,21 @@
-import { table } from "./table.js";
+import { tableString } from "../idist/tableString.js";
 import chalk from "chalk";
+import assert from "assert";
+import { mapSourcePosition } from "source-map-support";
 
-(() => {
-  let runs = 0;
-  let failed = 0;
-  let data;
+let data;
 
-  function test(expected: string, data, key?, options?) {
-    ++runs;
-    console.table(data);
-    const got = table(data, key, options);
-    console.log(got);
-    if (got !== expected) {
-      console.table(data);
-      console.error({ expected, got });
-      ++failed;
-    }
+describe("tableString", function () {
+  function test(what, expected, data, columnOptions, tableOptions) {
+    it((what ? what + " " : "") + "should render as expected", function () {
+      assert.equal(tableString(data, columnOptions, tableOptions), expected);
+    });
   }
 
+  test("Non-object", "", () => 0);
+  test("Null", "", null);
   test(
+    "Simple array with strings",
     "\n" +
       "┌─────────┐\n" +
       "│ Values  │\n" +
@@ -31,6 +28,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Array with tuples",
     "\n" +
       "┌───────┬───────┐\n" +
       "│   0   │   1   │\n" +
@@ -47,6 +45,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Array with Persons",
     "\n" +
       "┌───────────┬──────────┐\n" +
       "│ firstName │ lastName │\n" +
@@ -59,10 +58,12 @@ import chalk from "chalk";
       new Person("John", "Smith"),
       new Person("Jane", "Doe"),
       new Person("Emily", "Jones"),
-    ]
+    ],
+    [{ column: "firstName", align: "left" }, "lastName"]
   );
 
   test(
+    "Family object",
     "\n" +
       "┌──────────┬───────────┬──────────┐\n" +
       "│          │ firstName │ lastName │\n" +
@@ -77,8 +78,27 @@ import chalk from "chalk";
       daughter: new Person("Emily", "Smith"),
     }
   );
+  test(
+    "Unsorted family object",
+    "\n" +
+      "┌──────────┬───────────┬──────────┐\n" +
+      "│          │ firstName │ lastName │\n" +
+      "├──────────┼───────────┼──────────┤\n" +
+      "│ mother   │ Jane      │ Smith    │\n" +
+      "│ father   │ John      │ Smith    │\n" +
+      "│ daughter │ Emily     │ Smith    │\n" +
+      "└──────────┴───────────┴──────────┘",
+    {
+      mother: new Person("Jane", "Smith"),
+      father: new Person("John", "Smith"),
+      daughter: new Person("Emily", "Smith"),
+    },
+    undefined,
+    { propertyCompareFunction: null }
+  );
 
   test(
+    "Column selection",
     "\n" +
       "┌───────────┐\n" +
       "│ firstName │\n" +
@@ -96,6 +116,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Column reordering",
     "\n" +
       "┌───────────┬────────────┐\n" +
       "│ last name │ first name │\n" +
@@ -113,6 +134,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Column renaming",
     "\n" +
       "┌───────────┬────────────┐\n" +
       "│ Last Name │ First Name │\n" +
@@ -130,6 +152,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Deletion of heading",
     "\n" +
       "┌─────────┐\n" +
       "│ apples  │\n" +
@@ -141,6 +164,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Headers for indices",
     "\n" +
       "┌───────┬───────┐\n" +
       "│ first │ last  │\n" +
@@ -161,6 +185,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Explicit (index) column",
     "\n" +
       "┌─────────┬─────────┐\n" +
       "│ (index) │ Values  │\n" +
@@ -175,15 +200,16 @@ import chalk from "chalk";
   );
 
   test(
+    "Colorful content",
     "\n" +
-      "\x1B[37m\x1B[40m┌───────┬──────────────┐\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│ Price \x1B[37m\x1B[40m│ Fruit        \x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m├───────┼──────────────┤\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│  1.99 \x1B[37m\x1B[40m│\x1B[32m Apples       \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│  3.99 \x1B[37m\x1B[40m│\x1B[31m Strawberries \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│  0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│ 12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m└───────┴─────────────┘\x1B[49m\x1B[39m",
+      "\x1B[37m\x1B[40m┌────────────┬──────────────┐\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│ Price in $ \x1B[37m\x1B[40m│    Fruit     \x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m├────────────┼──────────────┤\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│       1.99 \x1B[37m\x1B[40m│\x1B[32m Apples       \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│       3.99 \x1B[37m\x1B[40m│\x1B[31m Strawberries \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│       0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m│      12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
+      "\x1B[37m\x1B[40m└────────────┴──────────────┘\x1B[49m\x1B[39m",
     (data = [
       { price: 1.99, fruit: chalk.green("Apples") },
       { price: 3.99, fruit: chalk.red("Strawberries") },
@@ -196,22 +222,26 @@ import chalk from "chalk";
     }
   );
 
-  console.log(table(data));
   test(
+    "Right alignment for values and headings",
     "\n" +
       "┌───┬─────────┐\n" +
       "│   │  Values │\n" +
       "├───┼─────────┤\n" +
-      "│ 1 │ apples  │\n" +
+      "│ 1 │  apples │\n" +
       "│ 2 │ oranges │\n" +
       "│ 3 │ bananas │\n" +
       "└───┴─────────┘",
     (data = ["apples", "oranges", "bananas"]),
     [{ column: "Values", align: "right" }],
-    { alignTableHeadings: "right", index: [...data.keys()].map((i) => i + 1) }
+    {
+      alignTableHeadings: "right",
+      index: [...Object.keys(data)].map((i) => parseInt(i, 10) + 1),
+    }
   );
 
   test(
+    "Center alignment",
     "\n" +
       "┌───────────────┐\n" +
       "│    Values     │\n" +
@@ -226,6 +256,7 @@ import chalk from "chalk";
   );
 
   test(
+    "Suppression of null and regexp",
     "\n" +
       "┌─────────┬──────────┬────────┐\n" +
       "│  Goods  │ Services │ Values │\n" +
@@ -248,17 +279,15 @@ import chalk from "chalk";
       { Services: BigInt(5) },
     ]
   );
+});
 
-  failed && console.log(`${runs} tests ran, ${failed} failed.`);
-  !failed && console.log(`All ${runs} tests passed.`);
+function Person(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.toString = () => firstName + " " + lastName;
+}
 
-  function Person(firstName, lastName) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.toString = () => firstName + " " + lastName;
-  }
-  function Person2(firstName, lastName) {
-    this["first name"] = firstName;
-    this["last name"] = lastName;
-  }
-})();
+function Person2(firstName, lastName) {
+  this["first name"] = firstName;
+  this["last name"] = lastName;
+}
