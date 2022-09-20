@@ -7,7 +7,7 @@ So table-string is a function originally inspired by `console.table()` but with 
 * First, it doesn't output anything to the console, but returns a string.
 * More importantly its output looks less technical. It is aimed at simplifying the creation of meaningful tables for CLIs. 
 
-## Example
+## Purpose
 
 We will generate a table for this array:
 
@@ -22,6 +22,7 @@ const data = [
 
 ### What you get without tableString
 On `node.js` `console.table(data)` produces a table that looks very debug-like:
+
 ![console.table output](./images/console.table.png)
 
 ### What you might be looking for
@@ -69,11 +70,32 @@ Other table packages exist with different goals. The table-string package does n
 
 ## Configuration
 
+`tableString(data, columnOptions, tableOptions)` takes three parameters: 
+1. the data to be displayed
+2. options that describe odering, headings, and alignment of columns
+3. options that define global features of the table like alignment of headings or a chalk for the frame, 
+
 ### Column Options
 
-#### Properties
+The main purpose of column options is to tell the layout which columns to show and in which order.\
+It is also used to specify alignment and heading of columns.
+If no column options are given, the table will show all columns available in the underlying data.\
+If column options are defined, only the included columns are shown in the table.\
+Example: `[ "firstName", "lastName" ]` will show these two columns in that order. Values come from properties with the same name from the single rows of the table.
+
+#### Single Column Option Entry
+An entry of the colomnOptions array is a tripple `{ column: "name", heading: "Column Heading", alignment: "..."}`\
+All three properties are optional. Two abbreviations are supported:
+
+* The tuple `{ column: "name", heading: "Column Heading" }` can be shortend to `{ name: "Column Heading" }`\ 
+* The object `{ name: "name" }` can be shortend to a single string "name".
+
+All forms can be mixed: `[ { prop1: "Column Name" }, "prop2", { column: "prop3", align: "center" } ]` 
+
 
 ##### column
+
+This property selects a single data column of the table.  
 
 ##### heading
 
