@@ -18,7 +18,7 @@ export function initColumn(
 }
 
 function additionalColumns(
-  column: { keys: any; headings: any; alignments: any; },
+  column: { keys: any; headings: any; alignments: any },
   primitives: any[],
   hasIndex: any
 ) {
@@ -54,13 +54,20 @@ function keysFromData(data: any[], keys: (obj: object) => string[]) {
 
 function keys(columnOptions: ColumnOptions) {
   let k: any[];
-  return columnOptions.map((e) =>
-    typeof e === "string"
-      ? e
-      : (k = Object.keys(e)).length === 1
-      ? k[0]
-      : e["column"]
-  );
+  return columnOptions.map((e) => {
+    const key =
+      typeof e === "string"
+        ? e
+        : (k = Object.keys(e)).length === 1
+        ? k[0]
+        : e["column"];
+    console.assert(
+      key !== undefined,
+      "column option %O does not define a column",
+      e
+    );
+    return key;
+  });
 }
 
 function headings(columnOptions: ColumnOptions) {
