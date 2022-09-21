@@ -18,7 +18,13 @@
     "url": "git+https://github.com/ergberg/table-string.git"
   },
   "keywords": [
-    "table"
+    "table",
+    "text",
+    "ascii",
+    "color",
+    "options",
+    "headings",
+    "alignment"
   ],
   "author": "ergberg",
   "license": "MIT",
