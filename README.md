@@ -103,7 +103,7 @@ If column options are defined, only the included columns are shown in the table.
 Example: `[ {name: "firstName" }, {name: "lastName" } ]`[^2] will show these two columns in that order. 
 Values are taken from properties with the same name (from the objects that form the rows of the table).
 
-[^2]: Or shorter: `[ "firstName", "lastName" ]`, [see shortened notation](#shortend-notation) 
+[^2]: Or shorter: `[ "firstName", "lastName" ]`, [see shortened notation](#shortened-notation) 
 
 
 ##### name
