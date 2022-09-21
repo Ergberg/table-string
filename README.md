@@ -172,11 +172,4 @@ For example, [the `frameChalk` table option](#framechalk) might also be set usin
 
 Or you just want the columns to show up in alphabetical order: \
 `tableString(data = [{ z: 3, y: 4, x:2 }]), [...Object.keys(data[0])].sort())` renders as
-
-```
-┌───┬───┬───┐
-│ x │ y │ z │
-├───┼───┼───┤
-│ 2 │ 4 │ 3 │
-└───┴───┴───┘
-```
+![sorted columns](./images/sorted.png)
