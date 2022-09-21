@@ -1,5 +1,5 @@
-import { ColumnOptions } from "../types.js";
-import { column } from "./tableState.js";
+import { ColumnOption, ColumnOptions } from "../types.js";
+import { columns } from "./tableState.js";
 
 export function initColumn(
   data: any[],
@@ -8,31 +8,38 @@ export function initColumn(
   hasIndex: any
 ) {
   const keyFilter = keyVisibilityFilter();
-  columnOptions ??= keysFromData(data, keyFilter);
+  columnOptions ??= namesFromData(data, keyFilter);
 
-  column.keys = keys(columnOptions);
-  column.headings = headings(columnOptions);
-  column.alignments = alignments(columnOptions);
+  columns.length = 0;
+  columnOptions.forEach((e) =>
+    columns.push({
+      name: name(e),
+      heading: heading(e),
+      width: width(e),
+      align: align(e),
+      alignHeading: alignHeading(e),
+    })
+  );
 
-  additionalColumns(column, primitives, hasIndex);
+  additionalColumns(columns, primitives, hasIndex);
 }
 
 function additionalColumns(
-  column: { keys: any; headings: any; alignments: any },
+  columns: ColumnOption[],
   primitives: any[],
   hasIndex: any
 ) {
   const hasPrimitives = primitives.some((primitive: any) => primitive);
-  if (hasPrimitives && !column.keys.includes("Values")) {
-    column.keys.push("Values");
-    column.headings.push("Values");
-    column.alignments.push("Values");
+  if (hasPrimitives && !has(columns, "Values")) {
+    columns.push({ name: "Values", heading: "Values", align: "left" });
   }
-  if (hasIndex && !column.keys.includes("")) {
-    column.keys.unshift("");
-    column.headings.unshift("");
-    column.alignments.unshift("");
+  if (hasIndex && !has(columns, "")) {
+    columns.unshift({ name: "", heading: "", align: "left" });
   }
+}
+
+export function has(columns: ColumnOption[], key: string) {
+  return columns.some((column) => column.name === key);
 }
 
 function keyVisibilityFilter() {
@@ -40,7 +47,7 @@ function keyVisibilityFilter() {
     [...Object.keys(obj)].filter((k) => typeof obj[k] !== "function");
 }
 
-function keysFromData(data: any[], keys: (obj: object) => string[]) {
+function namesFromData(data: any[], keys: (obj: object) => string[]) {
   return [
     ...new Set(
       data.reduce(
@@ -52,39 +59,45 @@ function keysFromData(data: any[], keys: (obj: object) => string[]) {
   ] as string[];
 }
 
-function keys(columnOptions: ColumnOptions) {
+function name(e: string | ColumnOption | { [index: string]: string }) {
   let k: any[];
-  return columnOptions.map((e) => {
-    const key =
-      typeof e === "string"
-        ? e
-        : (k = Object.keys(e)).length === 1
-        ? k[0]
-        : e["column"];
-    console.assert(
-      key !== undefined,
-      "column option %O does not define a column",
-      e
-    );
-    return key;
-  });
-}
-
-function headings(columnOptions: ColumnOptions) {
-  let v: any[];
-  return columnOptions.map((e) =>
+  const name =
     typeof e === "string"
       ? e
-      : (v = Object.values(e)).length === 1
-      ? v[0]
-      : e["heading"] ?? e["column"]
+      : (k = Object.keys(e)).length === 1
+      ? k[0]
+      : e["name"];
+  console.assert(
+    name !== undefined,
+    "column option %O does not define a name",
+    e
   );
+  return name;
 }
 
-function alignments(columnOptions: ColumnOptions) {
-  return columnOptions.map((e) =>
-    typeof e === "string" || Object.values(e).length === 1
-      ? undefined
-      : e["align"]
-  );
+function heading(e: string | { [s: string]: any }) {
+  let v: any[];
+  return typeof e === "string"
+    ? e
+    : (v = Object.values(e)).length === 1
+    ? v[0]
+    : e["heading"] ?? e["name"];
+}
+
+function width(e) {
+  return typeof e === "string" || Object.values(e).length === 1
+    ? undefined
+    : e["width"];
+}
+
+function align(e) {
+  return typeof e === "string" || Object.values(e).length === 1
+    ? undefined
+    : e["align"];
+}
+
+function alignHeading(e) {
+  return typeof e === "string" || Object.values(e).length === 1
+    ? undefined
+    : e["alignHeading"] ?? e["align"];
 }

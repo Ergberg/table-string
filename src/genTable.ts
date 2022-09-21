@@ -1,7 +1,6 @@
 import { padBoth, padEnd, padStart } from "./util/padding.js";
 import {
-  column,
-  columnWidth,
+  columns,
   frameChalk,
   header,
   options,
@@ -16,7 +15,7 @@ export function genTable(
   const { topRow, normal, h_line, bottom } = { ...characters };
 
   let res = genRow(topRow);
-  if (column.keys.some((key: string) => header[key])) {
+  if (columns.some((column) => header[column.name])) {
     res += genRow(normal, header, -1) + genRow(h_line);
   }
   for (let i = 0; i < data.length; ++i) {
@@ -28,21 +27,33 @@ export function genTable(
 function genRow(kind: string, obj?: object, rowIndex?: number): string {
   const [first, fill, separator, end] = kind.split("");
 
-  return `\n${frameChalk.start}${first}${column.keys.reduce(
-    (res, key: string, columnIndex) =>
-      res +
-      pad(
-        value(obj, key, primitives, options.tableOptions?.index, rowIndex),
-        columnWidth[key],
-        rowIndex === -1
-          ? options.tableOptions?.alignTableHeadings ?? "center"
-          : column.alignments[columnIndex],
-        fill
-      ) +
-      (obj !== undefined ? frameChalk.start : "") +
-      (columnIndex !== column.keys.length - 1 ? separator : end),
-    ""
-  )}${frameChalk.end}`;
+  return (
+    columns.reduce(
+      (res, column, columnIndex) =>
+        res +
+        pad(
+          value(
+            obj,
+            column.name,
+            primitives,
+            options.tableOptions?.index,
+            rowIndex
+          ),
+          column.width,
+          rowIndex === -1
+            ? column.alignHeading ??
+                options.tableOptions?.alignTableHeadings ??
+                "center"
+            : column.align,
+          fill
+        ) +
+        (obj !== undefined ? frameChalk.start : "") +
+        (columnIndex !== columns.length - 1 ? separator : ""),
+      "\n" + frameChalk.start + first
+    ) +
+    end +
+    frameChalk.end
+  );
 }
 
 function pad(value: string, columnWidth: number, align: string, fill: string) {

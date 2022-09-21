@@ -1,7 +1,6 @@
 import { tableString } from "../idist/tableString.js";
 import chalk from "chalk";
 import assert from "assert";
-import { mapSourcePosition } from "source-map-support";
 
 let data;
 
@@ -15,6 +14,20 @@ describe("tableString", function () {
   test("Non-object", "", () => 0);
   test("Null", "", null);
   test(
+    "frameChalk",
+    "\n\x1B[37m\x1B[40m┌──┐\x1B[49m\x1B[39m\n\x1B[37m\x1B[40m└──┘\x1B[49m\x1B[39m",
+    [],
+    [{ Values: "" }],
+    {
+      frameChalk: "\x1B[37m\x1B[40m\x1B[49m\x1B[39m",
+    }
+  );
+  console.log(
+    tableString([], [{ Values: "" }], {
+      frameChalk: "\x1B[37m\x1B[40m\x1B[49m\x1B[39m",
+    })
+  );
+  test(
     "Simple array with strings",
     "\n" +
       "┌─────────┐\n" +
@@ -25,6 +38,20 @@ describe("tableString", function () {
       "│ bananas │\n" +
       "└─────────┘",
     ["apples", "oranges", "bananas"]
+  );
+
+  test(
+    "Wide table",
+    "\n" +
+      "┌────────────────────┐\n" +
+      "│       Values       │\n" +
+      "├────────────────────┤\n" +
+      "│ apples             │\n" +
+      "│ oranges            │\n" +
+      "│ bananas            │\n" +
+      "└────────────────────┘",
+    ["apples", "oranges", "bananas"],
+    [{ name: "Values", width: 20 }]
   );
 
   test(
@@ -59,7 +86,7 @@ describe("tableString", function () {
       new Person("Jane", "Doe"),
       new Person("Emily", "Jones"),
     ],
-    [{ column: "firstName", align: "left" }, "lastName"]
+    [{ name: "firstName", align: "left" }, "lastName"]
   );
 
   test(
@@ -160,28 +187,29 @@ describe("tableString", function () {
       "│ bananas │\n" +
       "└─────────┘",
     ["apples", "oranges", "bananas"],
-    [{ column: "Values", heading: "" }]
+    [{ name: "Values", heading: "" }]
   );
 
   test(
     "Headers for indices",
     "\n" +
-      "┌───────┬───────┐\n" +
-      "│ first │ last  │\n" +
-      "├───────┼───────┤\n" +
-      "│ John  │ Smith │\n" +
-      "│ Jane  │ Doe   │\n" +
-      "│ Emily │ Jones │\n" +
-      "└───────┴───────┘",
+      "┌──────────┬──────────┐\n" +
+      "│ first    │     last │\n" +
+      "├──────────┼──────────┤\n" +
+      "│ John-Boy │ Smith    │\n" +
+      "│ Jane     │ Doe      │\n" +
+      "│ Emilie   │ Johannes │\n" +
+      "└──────────┴──────────┘",
     [
-      ["John", "Smith"],
+      ["John-Boy", "Smith"],
       ["Jane", "Doe"],
-      ["Emily", "Jones"],
+      ["Emilie", "Johannes"],
     ],
     [
-      { column: "0", heading: "first" },
-      { column: "1", heading: "last" },
-    ]
+      { name: "0", heading: "first", align: "left" },
+      { name: "1", heading: "last" },
+    ],
+    { alignTableHeadings: "right" }
   );
 
   test(
@@ -195,8 +223,14 @@ describe("tableString", function () {
       "│       2 │ bananas │\n" +
       "└─────────┴─────────┘",
     (data = ["apples", "oranges", "bananas"]),
-    [{ column: "", heading: "(index)" }],
+    [{ name: "", heading: "(index)" }],
     { index: [...data.keys()] }
+  );
+  test(
+    "sorted columns",
+    "\n┌───┬───┬───┐\n│ x │ y │ z │\n├───┼───┼───┤\n│ 2 │ 4 │ 3 │\n└───┴───┴───┘",
+    (data = [{ z: 3, y: 4, x: 2 }]),
+    [...Object.keys(data[0])].sort()
   );
 
   test(
@@ -233,10 +267,10 @@ describe("tableString", function () {
       "│ 3 │ bananas │\n" +
       "└───┴─────────┘",
     (data = ["apples", "oranges", "bananas"]),
-    [{ column: "Values", align: "right" }],
+    [{ name: "Values", align: "right" }],
     {
       alignTableHeadings: "right",
-      index: [...Object.keys(data)].map((i) => parseInt(i, 10) + 1),
+      index: [...data.keys()].map((i) => i + 1),
     }
   );
 
@@ -252,7 +286,7 @@ describe("tableString", function () {
       "│ a longer text │\n" +
       "└───────────────┘",
     ["apples", "oranges", "bananas", "a longer text"],
-    [{ column: "Values", align: "center" }]
+    [{ name: "Values", align: "center" }]
   );
 
   test(

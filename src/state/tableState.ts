@@ -1,4 +1,4 @@
-import { ColumnOptions, TableOptions } from "../types.js";
+import { ColumnOption, ColumnOptions, TableOptions } from "../types.js";
 
 import { initPrimitives } from "./primitives.js";
 import { initColumn } from "./column.js";
@@ -11,8 +11,7 @@ export const options: {
   tableOptions: TableOptions;
 } = { columnOptions: [], tableOptions: {} };
 export const primitives = [];
-export const column = { keys: [""], headings: [""], alignments: [] };
-export const columnWidth: Record<string, number> = {};
+export const columns:ColumnOption[]=[];
 export const header = {};
 export const frameChalk = { start: "", end: "" };
 
@@ -26,12 +25,11 @@ export function init(
   initPrimitives(data);
   initColumn(data, columnOptions, primitives, tableOptions?.index);
   initColumnWidth(
-    column.keys,
-    column.headings,
+    columns,
     data,
     primitives,
     tableOptions?.index
   );
-  initHeader(column.keys, column.headings);
+  initHeader(columns);
   initFrameChalk(tableOptions?.frameChalk ?? "");
 }

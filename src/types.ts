@@ -1,8 +1,16 @@
+export type ColumnOption = {
+  name: string;
+  heading?: string;
+  width?: number;
+  align?: "left" | "center" | "right";
+  alignHeading?: "left" | "center" | "right";
+};
+
 export type ColumnOptions = (
-  | { column: string; heading?: string; align?: "left" | "center" | "right" }
-  // {key: "col", heading: "Column"} can be shortened to {col: "Column"},
+  | ColumnOption
+  // {name: "col", heading: "Column"} can be shortened to {col: "Column"},
   | { [index: string]: string }
-  // { column: "column" } can be abbreviated as "column".
+  // { name: "column" } can be abbreviated as "column".
   | string
 )[];
 

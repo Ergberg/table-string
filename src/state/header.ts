@@ -1,18 +1,17 @@
+import { ColumnOption } from "../types.js";
 import { header } from "./tableState.js";
 
-export function initHeader(keys: string[], headings: string[]) {
-  fromHeadings(keys, headings);
-  removeStaleEntries(keys);
+export function initHeader(columns: ColumnOption[]) {
+  fromHeadings(columns);
+  removeStaleEntries(columns);
 }
 
-function fromHeadings(keys: string[], headings: string[]) {
-  keys.forEach(
-    (key: string, idx: string | number) => (header[key] = headings[idx])
-  );
+function fromHeadings(columns: ColumnOption[]) {
+  columns.forEach((column) => (header[column.name] = column.heading));
 }
 
-function removeStaleEntries(keys: string | string[]) {
+function removeStaleEntries(columns: ColumnOption[]) {
   Object.keys(header).forEach(
-    (key) => keys.includes(key) || delete header[key]
+    (key) => columns.some((column) => column.name === key) || delete header[key]
   );
 }
