@@ -22,11 +22,7 @@ describe("tableString", function () {
       frameChalk: "\x1B[37m\x1B[40m\x1B[49m\x1B[39m",
     }
   );
-  console.log(
-    tableString([], [{ Values: "" }], {
-      frameChalk: "\x1B[37m\x1B[40m\x1B[49m\x1B[39m",
-    })
-  );
+
   test(
     "Simple array with strings",
     "\n" +
