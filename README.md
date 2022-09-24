@@ -157,7 +157,7 @@ All forms can be mixed: `[ { prop1: "Column Name" }, "prop2", { name: "prop3", a
 
 While column options refer to individual columns, there are a few options that affect the entire table: 
 * alignTableHeadings 
-* frameChalk
+* frameChalk, headerChalk, alternativeChalk
 * propertyCompareFunction
 * index
 
@@ -169,6 +169,14 @@ Possible values are `left`, `center`, and `right`. This overrides the default "c
 
 A string. Want an alternative color for the table's border? Just define a string value with opening and closing ANSI color escapes. 
 As an example: `{ frameChalk: "\x1B[37m\x1B[40m \x1B[49m\x1B[39m"}`
+
+#### headerChalk
+
+Specific setting for the header rows. Default is frameChalk.
+
+#### alternativeChalk
+
+Alternative chalk for every second table row. Default is frameChalk.
 
 #### propertyCompareFunction
 
