@@ -11,7 +11,7 @@ export const options: {
   tableOptions: TableOptions;
 } = { columnOptions: [], tableOptions: {} };
 export const primitives = [];
-export const columns:ColumnOption[]=[];
+export const columns: ColumnOption[] = [];
 export const header = {};
 export const frameChalk = { start: "", end: "" };
 
@@ -24,12 +24,7 @@ export function init(
   options.tableOptions = tableOptions;
   initPrimitives(data);
   initColumn(data, columnOptions, primitives, tableOptions?.index);
-  initColumnWidth(
-    columns,
-    data,
-    primitives,
-    tableOptions?.index
-  );
+  initColumnWidth(data, primitives, tableOptions?.index);
   initHeader(columns);
   initFrameChalk(tableOptions?.frameChalk ?? "");
 }

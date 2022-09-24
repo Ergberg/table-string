@@ -9,13 +9,13 @@ export function initColumn(
 ) {
   const keyFilter = keyVisibilityFilter();
   columnOptions ??= namesFromData(data, keyFilter);
-
   columns.length = 0;
   columnOptions.forEach((e) =>
     columns.push({
       name: name(e),
       heading: heading(e),
-      width: width(e),
+      padding: padding(e),
+      ...width(e),
       align: align(e),
       alignHeading: alignHeading(e),
     })
@@ -31,10 +31,15 @@ function additionalColumns(
 ) {
   const hasPrimitives = primitives.some((primitive: any) => primitive);
   if (hasPrimitives && !has(columns, "Values")) {
-    columns.push({ name: "Values", heading: "Values", align: "left" });
+    columns.push({
+      name: "Values",
+      heading: "Values",
+      align: "left",
+      padding: 1,
+    });
   }
   if (hasIndex && !has(columns, "")) {
-    columns.unshift({ name: "", heading: "", align: "left" });
+    columns.unshift({ name: "", heading: "", align: "left", padding: 1 });
   }
 }
 
@@ -43,18 +48,22 @@ export function has(columns: ColumnOption[], key: string) {
 }
 
 function keyVisibilityFilter() {
-  return (obj: object) =>
-    [...Object.keys(obj)].filter((k) => typeof obj[k] !== "function");
+  return (obj: object) => {
+    const res = [...Object.keys(obj)].filter(
+      (k) => typeof obj[k] !== "function"
+    );
+    return res;
+  };
 }
 
 function namesFromData(data: any[], keys: (obj: object) => string[]) {
   return [
     ...new Set(
-      data.reduce(
-        (res: string[], obj) =>
-          obj instanceof Object ? [...res, ...keys(obj)] : res,
-        []
-      )
+      data.reduce((res: string[], obj) => {
+        return obj !== null && typeof obj === "object"
+          ? [...res, ...keys(obj)]
+          : res;
+      }, [])
     ),
   ] as string[];
 }
@@ -67,11 +76,12 @@ function name(e: string | ColumnOption | { [index: string]: string }) {
       : (k = Object.keys(e)).length === 1
       ? k[0]
       : e["name"];
-  console.assert(
-    name !== undefined,
-    "column option %O does not define a name",
-    e
-  );
+  if (name === undefined)
+    throw Error(
+      `Column option {${Object.keys(e)
+        .map((key) => `${key}: ${e[key]}`)
+        .join(", ")}} does not define a name`
+    );
   return name;
 }
 
@@ -84,10 +94,27 @@ function heading(e: string | { [s: string]: any }) {
     : e["heading"] ?? e["name"];
 }
 
-function width(e) {
+function padding(e) {
   return typeof e === "string" || Object.values(e).length === 1
-    ? undefined
-    : e["width"];
+    ? 1
+    : e["padding"] ?? 1;
+}
+
+function width(e) {
+  const minWidth =
+    typeof e === "string" || Object.values(e).length === 1
+      ? undefined
+      : e["minWidth"] ?? e["width"];
+  const maxWidth =
+    typeof e === "string" || Object.values(e).length === 1
+      ? undefined
+      : e["maxWidth"] ?? e["width"];
+  if (minWidth !== undefined && maxWidth !== undefined && maxWidth < minWidth) {
+    throw Error(
+      `Column "${e["name"]}": minWidth (${minWidth}) must not exceed maxWidth (${maxWidth})`
+    );
+  }
+  return { minWidth, maxWidth };
 }
 
 function align(e) {

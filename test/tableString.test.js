@@ -6,16 +6,20 @@ let data;
 
 describe("tableString", function () {
   function test(what, expected, data, columnOptions, tableOptions) {
-    it((what ? what + " " : "") + "should render as expected", function () {
-      assert.equal(tableString(data, columnOptions, tableOptions), expected);
-    });
+    it(
+      (what ? what + " " : "") +
+        (expected === undefined ? "" : "should render as expected"),
+      function () {
+        assert.equal(tableString(data, columnOptions, tableOptions), expected);
+      }
+    );
   }
 
   test("Non-object", "", () => 0);
   test("Null", "", null);
   test(
     "frameChalk",
-    "\n\x1B[37m\x1B[40m┌──┐\x1B[49m\x1B[39m\n\x1B[37m\x1B[40m└──┘\x1B[49m\x1B[39m",
+    "\x1B[37m\x1B[40m┌──┐\x1B[49m\x1B[39m\n\x1B[37m\x1B[40m└──┘\x1B[49m\x1B[39m\n",
     [],
     [{ Values: "" }],
     {
@@ -25,41 +29,38 @@ describe("tableString", function () {
 
   test(
     "Simple array with strings",
-    "\n" +
-      "┌─────────┐\n" +
+    "┌─────────┐\n" +
       "│ Values  │\n" +
       "├─────────┤\n" +
       "│ apples  │\n" +
       "│ oranges │\n" +
       "│ bananas │\n" +
-      "└─────────┘",
+      "└─────────┘\n",
     ["apples", "oranges", "bananas"]
   );
 
   test(
     "Wide table",
-    "\n" +
-      "┌────────────────────┐\n" +
+    "┌────────────────────┐\n" +
       "│       Values       │\n" +
       "├────────────────────┤\n" +
       "│ apples             │\n" +
       "│ oranges            │\n" +
       "│ bananas            │\n" +
-      "└────────────────────┘",
+      "└────────────────────┘\n",
     ["apples", "oranges", "bananas"],
     [{ name: "Values", width: 20 }]
   );
 
   test(
     "Array with tuples",
-    "\n" +
-      "┌───────┬───────┐\n" +
+    "┌───────┬───────┐\n" +
       "│   0   │   1   │\n" +
       "├───────┼───────┤\n" +
       "│ John  │ Smith │\n" +
       "│ Jane  │ Doe   │\n" +
       "│ Emily │ Jones │\n" +
-      "└───────┴───────┘",
+      "└───────┴───────┘\n",
     [
       ["John", "Smith"],
       ["Jane", "Doe"],
@@ -69,14 +70,13 @@ describe("tableString", function () {
 
   test(
     "Array with Persons",
-    "\n" +
-      "┌───────────┬──────────┐\n" +
+    "┌───────────┬──────────┐\n" +
       "│ firstName │ lastName │\n" +
       "├───────────┼──────────┤\n" +
       "│ John      │ Smith    │\n" +
       "│ Jane      │ Doe      │\n" +
       "│ Emily     │ Jones    │\n" +
-      "└───────────┴──────────┘",
+      "└───────────┴──────────┘\n",
     [
       new Person("John", "Smith"),
       new Person("Jane", "Doe"),
@@ -87,14 +87,13 @@ describe("tableString", function () {
 
   test(
     "Family object",
-    "\n" +
-      "┌──────────┬───────────┬──────────┐\n" +
+    "┌──────────┬───────────┬──────────┐\n" +
       "│          │ firstName │ lastName │\n" +
       "├──────────┼───────────┼──────────┤\n" +
       "│ daughter │ Emily     │ Smith    │\n" +
       "│ father   │ John      │ Smith    │\n" +
       "│ mother   │ Jane      │ Smith    │\n" +
-      "└──────────┴───────────┴──────────┘",
+      "└──────────┴───────────┴──────────┘\n",
     {
       mother: new Person("Jane", "Smith"),
       father: new Person("John", "Smith"),
@@ -103,14 +102,13 @@ describe("tableString", function () {
   );
   test(
     "Unsorted family object",
-    "\n" +
-      "┌──────────┬───────────┬──────────┐\n" +
+    "┌──────────┬───────────┬──────────┐\n" +
       "│          │ firstName │ lastName │\n" +
       "├──────────┼───────────┼──────────┤\n" +
       "│ mother   │ Jane      │ Smith    │\n" +
       "│ father   │ John      │ Smith    │\n" +
       "│ daughter │ Emily     │ Smith    │\n" +
-      "└──────────┴───────────┴──────────┘",
+      "└──────────┴───────────┴──────────┘\n",
     {
       mother: new Person("Jane", "Smith"),
       father: new Person("John", "Smith"),
@@ -122,14 +120,13 @@ describe("tableString", function () {
 
   test(
     "Column selection",
-    "\n" +
-      "┌───────────┐\n" +
+    "┌───────────┐\n" +
       "│ firstName │\n" +
       "├───────────┤\n" +
       "│ John      │\n" +
       "│ Jane      │\n" +
       "│ Emily     │\n" +
-      "└───────────┘",
+      "└───────────┘\n",
     [
       new Person("John", "Smith"),
       new Person("Jane", "Doe"),
@@ -140,14 +137,13 @@ describe("tableString", function () {
 
   test(
     "Column reordering",
-    "\n" +
-      "┌───────────┬────────────┐\n" +
+    "┌───────────┬────────────┐\n" +
       "│ last name │ first name │\n" +
       "├───────────┼────────────┤\n" +
       "│ Smith     │ John       │\n" +
       "│ Doe       │ Jane       │\n" +
       "│ Jones     │ Emily      │\n" +
-      "└───────────┴────────────┘",
+      "└───────────┴────────────┘\n",
     [
       new Person2("John", "Smith"),
       new Person2("Jane", "Doe"),
@@ -158,14 +154,13 @@ describe("tableString", function () {
 
   test(
     "Column renaming",
-    "\n" +
-      "┌───────────┬────────────┐\n" +
+    "┌───────────┬────────────┐\n" +
       "│ Last Name │ First Name │\n" +
       "├───────────┼────────────┤\n" +
       "│ Smith     │ John       │\n" +
       "│ Doe       │ Jane       │\n" +
       "│ Jones     │ Emily      │\n" +
-      "└───────────┴────────────┘",
+      "└───────────┴────────────┘\n",
     [
       new Person("John", "Smith"),
       new Person("Jane", "Doe"),
@@ -176,26 +171,66 @@ describe("tableString", function () {
 
   test(
     "Deletion of heading",
-    "\n" +
-      "┌─────────┐\n" +
+    "┌─────────┐\n" +
       "│ apples  │\n" +
       "│ oranges │\n" +
       "│ bananas │\n" +
-      "└─────────┘",
+      "└─────────┘\n",
     ["apples", "oranges", "bananas"],
     [{ name: "Values", heading: "" }]
   );
 
   test(
+    "config",
+    "┌─────────────────┬─────────────┬──────────┬───────────┬──────────┐\n" +
+      "│      name       │ maxVersions │ maxDays  │ projects  │ branches │\n" +
+      "├─────────────────┼─────────────┼──────────┼───────────┼──────────┤\n" +
+      "│ default         │           5 │       30 │ .*        │ .*       │\n" +
+      "│ blog_production │    Infinity │ Infinity │ blog      │ main     │\n" +
+      "│ rule-2          │    Infinity │       90 │ .*        │ main     │\n" +
+      "│ bugfix          │           5 │ Infinity │ .*-plugin │ bug-.*   │\n" +
+      "└─────────────────┴─────────────┴──────────┴───────────┴──────────┘\n",
+    [
+      {
+        name: "default",
+        maxVersions: 5n,
+        maxDays: 30n,
+        projects: ".*",
+        branches: ".*",
+      },
+      {
+        name: "blog_production",
+        projects: "blog",
+        branches: "main",
+        maxDays: Infinity,
+        maxVersions: Infinity,
+      },
+      {
+        projects: ".*",
+        branches: "main",
+        maxDays: 90n,
+        name: "rule-2",
+        maxVersions: Infinity,
+      },
+      {
+        name: "bugfix",
+        projects: ".*-plugin",
+        branches: "bug-.*",
+        maxVersions: 5n,
+        maxDays: Infinity,
+      },
+    ]
+  );
+
+  test(
     "Headers for indices",
-    "\n" +
-      "┌──────────┬──────────┐\n" +
+    "┌──────────┬──────────┐\n" +
       "│ first    │     last │\n" +
       "├──────────┼──────────┤\n" +
       "│ John-Boy │ Smith    │\n" +
       "│ Jane     │ Doe      │\n" +
       "│ Emilie   │ Johannes │\n" +
-      "└──────────┴──────────┘",
+      "└──────────┴──────────┘\n",
     [
       ["John-Boy", "Smith"],
       ["Jane", "Doe"],
@@ -210,36 +245,71 @@ describe("tableString", function () {
 
   test(
     "Explicit (index) column",
-    "\n" +
-      "┌─────────┬─────────┐\n" +
+    "┌─────────┬─────────┐\n" +
       "│ (index) │ Values  │\n" +
       "├─────────┼─────────┤\n" +
       "│       0 │ apples  │\n" +
       "│       1 │ oranges │\n" +
       "│       2 │ bananas │\n" +
-      "└─────────┴─────────┘",
+      "└─────────┴─────────┘\n",
     (data = ["apples", "oranges", "bananas"]),
     [{ name: "", heading: "(index)" }],
     { index: [...data.keys()] }
   );
+
+  test(
+    "truncated to maxWidth",
+    "" +
+      "┌──────────┐\n" +
+      "│  Values  │\n" +
+      "├──────────┤\n" +
+      "│ long     │\n" +
+      "│ longer   │\n" +
+      "│ the l... │\n" +
+      "└──────────┘\n",
+    ["long", "longer", "the longest"],
+    [{ name: "Values", maxWidth: 10 }]
+  );
+
+  it("throws an exception if minWidth > maxWidth", function () {
+    assert.throws(
+      () =>
+        tableString(
+          ["long", "longer", "the longest"],
+          [{ name: "Values", maxWidth: 10, minWidth: 20 }]
+        ),
+      /must not exceed maxWidth/
+    );
+  });
+
+  it("throws an exception if a column option has no name", function () {
+    assert.throws(
+      () =>
+        tableString(
+          ["long", "longer", "the longest"],
+          [{ maxWidth: 10, minWidth: 20 }]
+        ),
+      /does not define a name/
+    );
+  });
+
   test(
     "sorted columns",
-    "\n┌───┬───┬───┐\n│ x │ y │ z │\n├───┼───┼───┤\n│ 2 │ 4 │ 3 │\n└───┴───┴───┘",
+    "┌───┬───┬───┐\n│ x │ y │ z │\n├───┼───┼───┤\n│ 2 │ 4 │ 3 │\n└───┴───┴───┘\n",
     (data = [{ z: 3, y: 4, x: 2 }]),
     [...Object.keys(data[0])].sort()
   );
 
   test(
     "Colorful content",
-    "\n" +
-      "\x1B[37m\x1B[40m┌────────────┬──────────────┐\x1B[49m\x1B[39m\n" +
+    "\x1B[37m\x1B[40m┌────────────┬──────────────┐\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│ Price in $ \x1B[37m\x1B[40m│    Fruit     \x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m├────────────┼──────────────┤\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│       1.99 \x1B[37m\x1B[40m│\x1B[32m Apples       \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│       3.99 \x1B[37m\x1B[40m│\x1B[31m Strawberries \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│       0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│      12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m└────────────┴──────────────┘\x1B[49m\x1B[39m",
+      "\x1B[37m\x1B[40m└────────────┴──────────────┘\x1B[49m\x1B[39m\n",
     (data = [
       { price: 1.99, fruit: chalk.green("Apples") },
       { price: 3.99, fruit: chalk.red("Strawberries") },
@@ -254,14 +324,13 @@ describe("tableString", function () {
 
   test(
     "Right alignment for values and headings",
-    "\n" +
-      "┌───┬─────────┐\n" +
+    "┌───┬─────────┐\n" +
       "│   │  Values │\n" +
       "├───┼─────────┤\n" +
       "│ 1 │  apples │\n" +
       "│ 2 │ oranges │\n" +
       "│ 3 │ bananas │\n" +
-      "└───┴─────────┘",
+      "└───┴─────────┘\n",
     (data = ["apples", "oranges", "bananas"]),
     [{ name: "Values", align: "right" }],
     {
@@ -272,23 +341,21 @@ describe("tableString", function () {
 
   test(
     "Center alignment",
-    "\n" +
-      "┌───────────────┐\n" +
+    "┌───────────────┐\n" +
       "│    Values     │\n" +
       "├───────────────┤\n" +
       "│    apples     │\n" +
       "│    oranges    │\n" +
       "│    bananas    │\n" +
       "│ a longer text │\n" +
-      "└───────────────┘",
+      "└───────────────┘\n",
     ["apples", "oranges", "bananas", "a longer text"],
     [{ name: "Values", align: "center" }]
   );
 
   test(
     "Suppression of null and regexp",
-    "\n" +
-      "┌─────────┬──────────┬────────┐\n" +
+    "┌─────────┬──────────┬────────┐\n" +
       "│  Goods  │ Services │ Values │\n" +
       "├─────────┼──────────┼────────┤\n" +
       "│         │          │ apples │\n" +
@@ -298,7 +365,7 @@ describe("tableString", function () {
       "│         │          │        │\n" +
       "│       5 │        6 │        │\n" +
       "│         │        5 │        │\n" +
-      "└─────────┴──────────┴────────┘",
+      "└─────────┴──────────┴────────┘\n",
     [
       "apples",
       { Goods: "oranges" },

@@ -24,47 +24,58 @@ export function genTable(
   return res + genRow(bottom);
 }
 
-function genRow(kind: string, obj?: object, rowIndex?: number): string {
+function genRow(kind: string, row?: object, rowIndex?: number): string {
   const [first, fill, separator, end] = kind.split("");
 
   return (
     columns.reduce(
-      (res, column, columnIndex) =>
+      (res, column, columnIndex) => (
         res +
-        pad(
-          value(
-            obj,
-            column.name,
-            primitives,
-            options.tableOptions?.index,
-            rowIndex
-          ),
-          column.width,
-          rowIndex === -1
-            ? column.alignHeading ??
-                options.tableOptions?.alignTableHeadings ??
-                "center"
-            : column.align,
-          fill
-        ) +
-        (obj !== undefined ? frameChalk.start : "") +
-        (columnIndex !== columns.length - 1 ? separator : ""),
-      "\n" + frameChalk.start + first
+          pad(
+            value(
+              row,
+              column.name,
+              primitives,
+              options.tableOptions?.index,
+              rowIndex
+            ),
+            column.minWidth,
+            column.maxWidth - 2,
+            rowIndex === -1
+              ? column.alignHeading ??
+                  options.tableOptions?.alignTableHeadings ??
+                  "center"
+              : column.align,
+            fill,
+            column.padding
+          ) +
+          (row !== undefined ? frameChalk.start : "") +
+          (columnIndex !== columns.length - 1 ? separator : "")
+      ),
+      frameChalk.start + first
     ) +
     end +
-    frameChalk.end
+    frameChalk.end +
+    "\n"
   );
 }
 
-function pad(value: string, columnWidth: number, align: string, fill: string) {
+function pad(
+  value: string,
+  minWidth: number,
+  maxWidth: number,
+  align: string,
+  fill: string,
+  padding: number
+) {
   align ??=
     typeof value === "number" || typeof value === "bigint" ? "right" : "left";
   switch (align) {
     case "center":
-      return padBoth(value, columnWidth, fill);
+      return padBoth(value, minWidth, maxWidth, fill, padding);
     case "right":
-      return padStart(value + fill, columnWidth, fill);
+      return padStart(value, minWidth, maxWidth, fill, padding);
     default:
-      return padEnd(value, columnWidth, fill);
+      return padEnd(value, minWidth, maxWidth, fill, padding);
   }
 }

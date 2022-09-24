@@ -1,25 +1,55 @@
 import { ansiDestruct } from "./ansiDestruct.js";
 
-
-export function padEnd(value: any, maxWidth: number, fill: string) {
-  const { width, first, trimmed, last } = ansiDestruct(value);
+export function padEnd(
+  value: any,
+  minWidth: number,
+  maxWidth: number,
+  fill: string,
+  padding: number
+) {
+  const { width, first, trimmed, last } = ansiDestruct(value, maxWidth, "left");
   return (
     first +
-    (fill + trimmed).padEnd(trimmed.length - width + maxWidth, fill) +
+    (fill.repeat(padding) + trimmed).padEnd(trimmed.length - width + minWidth, fill) +
     last
   );
 }
 
-export function padStart(value: string, maxWidth: number, fill: string) {
-  const { width, first, trimmed, last } = ansiDestruct(value);
+export function padStart(
+  value: string,
+  minWidth: number,
+  maxWidth: number,
+  fill: string,
+  padding: number
+) {
+  const { width, first, trimmed, last } = ansiDestruct(
+    value,
+    maxWidth,
+    "right"
+  );
   return (
-    first + trimmed.padStart(trimmed.length - width + maxWidth, fill) + last
+    first +
+    (trimmed + fill.repeat(padding)).padStart(
+      trimmed.length - width + minWidth,
+      fill
+    ) +
+    last
   );
 }
 
-export function padBoth(value: any, maxWidth: number, fill: string) {
-  const { width, first, trimmed, last } = ansiDestruct(value);
-  const w = trimmed.length - width + maxWidth;
+export function padBoth(
+  value: any,
+  minWidth: number,
+  maxWidth: number,
+  fill: string,
+  padding: number
+) {
+  const { width, first, trimmed, last } = ansiDestruct(
+    value,
+    maxWidth,
+    "center"
+  );
+  const w = trimmed.length - width + minWidth;
   const start = first.padStart(Math.trunc((w - trimmed.length) / 2), fill);
   return (start + trimmed).padEnd(w, fill) + last;
 }

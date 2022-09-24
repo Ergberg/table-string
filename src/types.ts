@@ -1,7 +1,9 @@
 export type ColumnOption = {
   name: string;
   heading?: string;
-  width?: number;
+  padding?: number;
+  maxWidth?: number;
+  minWidth?: number;
   align?: "left" | "center" | "right";
   alignHeading?: "left" | "center" | "right";
 };

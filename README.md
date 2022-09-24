@@ -92,7 +92,7 @@ They are also used to specify alignments and headings of columns.
 An entry of the columnOptions array defines up to 5 values for a column:
 * name
 * heading
-* width
+* minWidth, maxWidth, width
 * align
 * alignHeading 
 Of these values, only the `name` is mandatory.
@@ -117,9 +117,18 @@ The `name` selects a single data column of the table. It is the name of this col
 
 Sets the heading of the column. If not specified, the column name is used as the heading. 
 
+##### minWidth
+
+The minimal width of a column is derived from the heading and the widest values. The `width` option can be used to explicitly set a minimum width for the column.   
+
+
+##### maxWidth
+
+If set, truncates too long output in this column to _n_ characters. It is an error to set `maxWidth` < `minWidth`. 
+
 ##### width
 
-The width of a column is derived from the heading and the widest values. The `width` option can be used to explicitly set a minimum width for the column. Actually, the `width` can not be used to truncate content.  
+Can be used as an abbreviation for setting `minWidth` and `maxWidth` to the same value.    
 
 ##### align
 
