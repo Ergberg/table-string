@@ -4,7 +4,11 @@ import { initPrimitives } from "./primitives.js";
 import { initColumn } from "./column.js";
 import { initColumnWidth } from "./columnWidth.js";
 import { initHeader } from "./header.js";
-import { initFrameChalk } from "./frameChalk.js";
+import {
+  initAlternativeChalk,
+  initFrameChalk,
+  initHeaderChalk,
+} from "./chalk.js";
 
 export const options: {
   columnOptions: ColumnOptions;
@@ -14,6 +18,8 @@ export const primitives = [];
 export const columns: ColumnOption[] = [];
 export const header = {};
 export const frameChalk = { start: "", end: "" };
+export const headerChalk = { start: "", end: "" };
+export const alternativeChalk = { start: "", end: "" };
 
 export function init(
   data: any[],
@@ -27,4 +33,8 @@ export function init(
   initColumnWidth(data, primitives, tableOptions?.index);
   initHeader(columns);
   initFrameChalk(tableOptions?.frameChalk ?? "");
+  initHeaderChalk(tableOptions?.headerChalk ?? tableOptions?.frameChalk ?? "");
+  initAlternativeChalk(
+    tableOptions?.alternativeChalk ?? tableOptions?.frameChalk ?? ""
+  );
 }

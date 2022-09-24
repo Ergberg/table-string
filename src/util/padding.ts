@@ -10,7 +10,10 @@ export function padEnd(
   const { width, first, trimmed, last } = ansiDestruct(value, maxWidth, "left");
   return (
     first +
-    (fill.repeat(padding) + trimmed).padEnd(trimmed.length - width + minWidth, fill) +
+    (fill.repeat(padding) + trimmed).padEnd(
+      trimmed.length - width + minWidth + 2 * padding,
+      fill
+    ) +
     last
   );
 }
@@ -30,7 +33,7 @@ export function padStart(
   return (
     first +
     (trimmed + fill.repeat(padding)).padStart(
-      trimmed.length - width + minWidth,
+      trimmed.length - width + minWidth + 2 * padding,
       fill
     ) +
     last
@@ -49,7 +52,7 @@ export function padBoth(
     maxWidth,
     "center"
   );
-  const w = trimmed.length - width + minWidth;
+  const w = trimmed.length - width + minWidth + 2 * padding;
   const start = first.padStart(Math.trunc((w - trimmed.length) / 2), fill);
   return (start + trimmed).padEnd(w, fill) + last;
 }

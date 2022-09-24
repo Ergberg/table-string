@@ -2,6 +2,8 @@ import { padBoth, padEnd, padStart } from "./util/padding.js";
 import {
   columns,
   frameChalk,
+  headerChalk,
+  alternativeChalk,
   header,
   options,
   primitives,
@@ -14,9 +16,9 @@ export function genTable(
 ) {
   const { topRow, normal, h_line, bottom } = { ...characters };
 
-  let res = genRow(topRow);
+  let res = genRow(topRow, undefined, -3);
   if (columns.some((column) => header[column.name])) {
-    res += genRow(normal, header, -1) + genRow(h_line);
+    res += genRow(normal, header, -2) + genRow(h_line, undefined, -1);
   }
   for (let i = 0; i < data.length; ++i) {
     res += genRow(normal, data[i], i);
@@ -29,35 +31,49 @@ function genRow(kind: string, row?: object, rowIndex?: number): string {
 
   return (
     columns.reduce(
-      (res, column, columnIndex) => (
+      (res, column, columnIndex) =>
         res +
-          pad(
-            value(
-              row,
-              column.name,
-              primitives,
-              options.tableOptions?.index,
-              rowIndex
-            ),
-            column.minWidth,
-            column.maxWidth - 2,
-            rowIndex === -1
-              ? column.alignHeading ??
-                  options.tableOptions?.alignTableHeadings ??
-                  "center"
-              : column.align,
-            fill,
-            column.padding
-          ) +
-          (row !== undefined ? frameChalk.start : "") +
-          (columnIndex !== columns.length - 1 ? separator : "")
-      ),
-      frameChalk.start + first
+        pad(
+          value(
+            row,
+            column.name,
+            primitives,
+            options.tableOptions?.index,
+            rowIndex
+          ),
+          column.minWidth,
+          column.maxWidth,
+          rowIndex === -2
+            ? column.alignHeading ??
+                options.tableOptions?.alignTableHeadings ??
+                "center"
+            : column.align,
+          fill,
+          column.padding
+        ) +
+        (row !== undefined ? chalkStart(rowIndex) : "") +
+        (columnIndex !== columns.length - 1 ? separator : ""),
+      chalkStart(rowIndex) + first
     ) +
     end +
-    frameChalk.end +
+    chalkEnd(rowIndex) +
     "\n"
   );
+
+  function chalkStart(rowIndex) {
+    return rowIndex < 0
+      ? headerChalk.start
+      : rowIndex % 2 === 1
+      ? alternativeChalk.start
+      : frameChalk.start;
+  }
+  function chalkEnd(rowIndex) {
+    return rowIndex <0
+      ? headerChalk.end
+      : rowIndex % 2 === 1
+      ? alternativeChalk.end
+      : frameChalk.end;
+  }
 }
 
 function pad(

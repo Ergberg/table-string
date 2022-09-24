@@ -93,6 +93,7 @@ An entry of the columnOptions array defines up to 5 values for a column:
 * name
 * heading
 * minWidth, maxWidth, width
+* padding
 * align
 * alignHeading 
 Of these values, only the `name` is mandatory.
@@ -108,35 +109,39 @@ The values are taken from the properties of the same name (from the objects that
 
 ##### name
 
-The `name` selects a single data column of the table. It is the name of this column. Possible values are the property names (keys) of the objects specified as table data. These include '0', '1', ... if the values in the data object are arrays. In addition, two special column names may exist: 
+A string. The `name` selects a single data column of the table. It is the name of this column. Possible values are the property names (keys) of the objects specified as table data. These include '0', '1', ... if the values in the data object are arrays. In addition, two special column names may exist: 
 
 * `"Values"` is the name of the column of primitive values. If the data object for the table is an array, this column contains all strings and numbers that are direct elements of this array. 
 * `""` is the name of the index column. Unlike `console.table()`, this column is not included by default. To add an index column, you must explicitly specify the values for the index column [using the `index` table option](#index).  
 
 ##### heading
 
-Sets the heading of the column. If not specified, the column name is used as the heading. 
+A string. Sets the heading of the column. If not specified, the column name is used as the heading. 
 
 ##### minWidth
 
-The minimal width of a column is derived from the heading and the widest values. The `width` option can be used to explicitly set a minimum width for the column.   
+A positive integer. The minimal width of a column is derived from the heading and the widest values. The `width` option can be used to explicitly set a minimum width for the column.   
 
 
 ##### maxWidth
 
-If set, truncates too long output in this column to _n_ characters. It is an error to set `maxWidth` < `minWidth`. 
+A positive integer. If set, truncates too long output in this column to _n_ characters. It is an error to set `maxWidth` < `minWidth`. 
 
 ##### width
 
-Can be used as an abbreviation for setting `minWidth` and `maxWidth` to the same value.    
+A positive integer. Can be used as an abbreviation for setting `minWidth` and `maxWidth` to the same value.    
+
+##### padding 
+
+A positive integer. Adds spaces to the left and to the right of a value in a column. Default is 1 space.
 
 ##### align
 
-Sets the alignment for the values of the column. Possible values are `left`, `center`, and `right`. The default is `left` for most values. If no alignment is specified for the column, number values will be right aligned by default. This also affects how the heading of the column is aligned. If you want a different alignment for the column heading, use the [`alignHeading` column option](#alignHeading). By default, column headings are all center aligned. This can  be changed globally with the [`alignTableHeadings` table option](#aligntableheadings).
+Possible values are `left`, `center`, and `right`. Sets the alignment for the values of the column.  The default is `left` for most values. If no alignment is specified for the column, number values will be right aligned by default. This also affects how the heading of the column is aligned. If you want a different alignment for the column heading, use the [`alignHeading` column option](#alignHeading). By default, column headings are all center aligned. This can  be changed globally with the [`alignTableHeadings` table option](#aligntableheadings).
 
 ##### alignHeading
 
-If the [`align` column option](#align) is defined, this will also align the heading. The option `alignHeading` allows a different alignment of the heading. Possible values are `left`, `center`, and `right`. 
+Possible values are `left`, `center`, and `right`. If the [`align` column option](#align) is defined, this will also align the heading. The option `alignHeading` allows a different alignment of the heading. 
 The default is `center` if not overridden by the [table option `alignTableHeadings`](#aligntableheadings).
 
 #### Shortened Notation
@@ -158,20 +163,20 @@ While column options refer to individual columns, there are a few options that a
 
 #### alignTableHeadings
 
-This overrides the default "center" alignment of column headings. The `align` and `alignHeading` values for individual columns take precedence over this option.
+Possible values are `left`, `center`, and `right`. This overrides the default "center" alignment of column headings. The `align` and `alignHeading` values for individual columns take precedence over this option.
 
 #### frameChalk
 
-Want an alternative color for the table's border? Just define a string value with opening and closing ANSI color escapes. 
+A string. Want an alternative color for the table's border? Just define a string value with opening and closing ANSI color escapes. 
 As an example: `{ frameChalk: "\x1B[37m\x1B[40m \x1B[49m\x1B[39m"}`
 
 #### propertyCompareFunction
 
-Normally, the data object for `tableString()` is an array. However, you can also pass an object. The properties of this object are then used to form the rows of the table. If the order of the rows is important to you, you can specify a comparison function to sort them. By default, the properties ar sorted alphabetically. If you do not want  sorting, specify: `propertyCompareFunction: null`.  
+A function. Normally, the data object for `tableString()` is an array. However, you can also pass an object. The properties of this object are then used to form the rows of the table. If the order of the rows is important to you, you can specify a comparison function to sort them. By default, the properties ar sorted alphabetically. If you do not want  sorting, specify: `propertyCompareFunction: null`.  
 
 #### index
 
-To add an index column, define values for that column. This can look like this: `index: ["A", "B", "C"]` or `index: [...data.keys()]`. The column is named `""` (the empty string) and its heading is also `""`. You can change heading and alignment with a column option for `""`: `{ name: "", heading: "(index)", align: "right" }`.
+An array of values. To add an index column, define values for that column. This can look like this: `index: ["A", "B", "C"]` or `index: [...data.keys()]`. The column is named `""` (the empty string) and its heading is also `""`. You can change heading and alignment with a column option for `""`: `{ name: "", heading: "(index)", align: "right" }`.
 
 ### Using Functions in Options
 

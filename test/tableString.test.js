@@ -3,7 +3,7 @@ import chalk from "chalk";
 import assert from "assert";
 
 let data;
-
+chalk.level = 1;
 describe("tableString", function () {
   function test(what, expected, data, columnOptions, tableOptions) {
     it(
@@ -41,13 +41,13 @@ describe("tableString", function () {
 
   test(
     "Wide table",
-    "┌────────────────────┐\n" +
-      "│       Values       │\n" +
-      "├────────────────────┤\n" +
-      "│ apples             │\n" +
-      "│ oranges            │\n" +
-      "│ bananas            │\n" +
-      "└────────────────────┘\n",
+    "┌──────────────────────┐\n" +
+      "│        Values        │\n" +
+      "├──────────────────────┤\n" +
+      "│ apples               │\n" +
+      "│ oranges              │\n" +
+      "│ bananas              │\n" +
+      "└──────────────────────┘\n",
     ["apples", "oranges", "bananas"],
     [{ name: "Values", width: 20 }]
   );
@@ -268,7 +268,7 @@ describe("tableString", function () {
       "│ the l... │\n" +
       "└──────────┘\n",
     ["long", "longer", "the longest"],
-    [{ name: "Values", maxWidth: 10 }]
+    [{ name: "Values", maxWidth: 8 }]
   );
 
   it("throws an exception if minWidth > maxWidth", function () {
@@ -375,6 +375,77 @@ describe("tableString", function () {
       { Goods: 5, Services: 6 },
       { Services: BigInt(5) },
     ]
+  );
+
+  test(
+    "Values center trimmed with padding",
+    "┌───────────────────┐\n" +
+      "│      Values       │\n" +
+      "├───────────────────┤\n" +
+      "│    one by one     │\n" +
+      "│   two and a ...   │\n" +
+      "│   ...here wh...   │\n" +
+      "│   ... musket...   │\n" +
+      "└───────────────────┘\n",
+    [
+      "one by one",
+      "two and a half",
+      "and then there where three ",
+      "four musketeers ",
+    ],
+    [{ name: "Values", padding: 3, align: "center", maxWidth: 13 }]
+  );
+
+  test(
+    "zero-padding",
+    "┌──────────┐\n" +
+      "│  Values  │\n" +
+      "├──────────┤\n" +
+      "│one by one│\n" +
+      "│...nd a...│\n" +
+      "│...ere ...│\n" +
+      "│...musk...│\n" +
+      "└──────────┘\n",
+    [
+      "one by one",
+      "two and a half",
+      "and then there where three",
+      "four musketeers",
+    ],
+    [{ name: "Values", padding: 0, align: "center", maxWidth: 10 }]
+  );
+
+  test(
+    "heading chalk",
+    "\x1B[1m┌────────┐\x1B[22m\n" +
+      "\x1B[1m│ Values \x1B[1m│\x1B[22m\n" +
+      "\x1B[1m├────────┤\x1B[22m\n" +
+      "│ 1      │\n" +
+      "│ 2      │\n" +
+      "└────────┘\n",
+    [1, 2],
+    undefined,
+    {
+      headerChalk: chalk.bold("x"),
+    }
+  );
+  test(
+    "alternative chalk",
+    "\x1B[40m\x1B[97m┌────────┐\x1B[39m\x1B[49m\n" +
+      "\x1B[40m\x1B[97m│ Values \x1B[40m\x1B[97m│\x1B[39m\x1B[49m\n" +
+      "\x1B[40m\x1B[97m├────────┤\x1B[39m\x1B[49m\n" +
+      "\x1B[44m\x1B[37m│ 1      \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[40m\x1B[37m│ 2      \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[44m\x1B[37m│ 3      \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[40m\x1B[37m│ 4      \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[44m\x1B[37m└────────┘\x1B[39m\x1B[49m\n",
+    [1, 2, 3, 4],
+    undefined,
+    {
+      alternativeChalk: chalk.bgBlack.white("x"),
+      frameChalk: chalk.bgBlue.white("x"),
+      headerChalk: chalk.bgBlack.whiteBright("x"),
+    }
   );
 });
 
