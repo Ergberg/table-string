@@ -19,12 +19,18 @@
   },
   "keywords": [
     "table",
+    "string",
+    "format",
+    "terminal",
+    "align",
+    "padding",
+    "tty",
+    "console",
+    "cli",
     "text",
+    "ansi",
     "ascii",
-    "color",
-    "options",
-    "headings",
-    "alignment"
+    "color"
   ],
   "author": "ergberg",
   "license": "MIT",
