@@ -65,7 +65,15 @@ describe("tableString", function () {
 
   test("Simple date value", "┌┐\n" + "││\n" + "└┘", [new Date()]);
 
-  test("Object with object", "┌┐\n" + "││\n" + "└┘", [{ o: {} }]);
+  test(
+    "Object with object",
+    "┌─────────────────┐\n" +
+      "│        o        │\n" +
+      "├─────────────────┤\n" +
+      "│ [object Object] │\n" +
+      "└─────────────────┘",
+    [{ o: {} }]
+  );
 
   test(
     "Wide table",
