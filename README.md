@@ -69,18 +69,49 @@ There are other table packages with different targets. The table-string package 
  *  No support for emojis. Currently, emojis do not seem to be well supported in monospace fonts. Emojis tend to break table spacing.
  *  No dynamic effects on TTYs based on cursor repositioning. The result of the `tableString` function is a simple string that can be printed to a text file. 
 
-## Configuration
+## Usage
+
+### tableString
+
+`tableString` generates a multiline string that renders as a table when printed to a tty. The `data` for the table is typically provided as an array of objects. The properties of those objects define the columns of the table, the array entries are the rows. The look of the table can be controlled by additional option parameters:
 
 `tableString(data, columnOptions, tableOptions)` takes three parameters: 
-1. the data to be displayed
-2. options describing the order, headings and alignment of the columns
-3. options that specify global characteristics of the table, such as alignment of headings or a chalk for the border.
+1. [The data](#data) to be displayed
+2. [Column Options](#column-options) describing the order, headings and alignment of the columns
+3. [Table Options](#table-options) that specify global characteristics of the table, such as alignment of headings or a chalk for the border.
 
-The option are typically simple values or key-value pairs. But sometimes it is also helpful to use [JavaScript functions to compute option](#using-functions-in-options).   
+The options are typically simple values or key-value pairs. But sometimes it is also helpful to use [JavaScript functions to compute option](#using-functions-in-options).   
+
+### flatten
+
+Newlines in your data will break the output of tableString. Multiple lines of text in a table cell are not supported. But it is possible to substitute multiline strings with multiple rows. The `flatten` function will do that for you:
+
+```
+flatten([{a:"one line", b: "two\nlines"}]) == [{a:"one line", b:"two"}, {a:"", b:"lines"}]
+```
+
+Printing `tableString(flatten([{a:"one line", b: "two\nlines"}]))` will look like this:
+
+![flatten](/images/flatten1.png)
+
+With `flatten`, it is also possible to use `tabelString` results as values in `tableString` tables 😏
+
+![flatten](/images/flatten2.png)
+
+
+## Configuration
 
 ### Data
 
 In general, `tableString` is called with an array[^1]. The elements of the array are used to populate the rows of the table. Values that are not strings, numbers, or objects are ignored. Strings can contain ANSI color escapes. If they occur at the beginning or the end of the string, they will be automatically extended if the string needs to be padded to fill the column width.  
+
+If the array contains primitive values, i.e. strings, numbers, or BigInts, those are shown in a column called "Values". Non primitive values are objects. These objects have properties. Each property defines a column of the table and the property value of an row's object is the value in the column for that row. Columns values should be primitive values. More complex values are likely show as `"[object Object]"`. **String values with newlines break the table layout**. To use multiline strings as values, first [`flatten` the table](#flatten).
+
+There is one special property called "**`<hr>`**". If the "`<hr>`" property is defined in the object for a row, e.g. `{ .... "<hr>": true}`, an horizontal line is included after that row. 
+
+  
+
+
 
 [^1]: You can also pass an object instead of an array, [see the table option `propertyCompareFunction`](#propertycomparefunction).
 
@@ -137,7 +168,7 @@ A positive integer. Adds spaces to the left and to the right of a value in a col
 
 ##### align
 
-Possible values are `left`, `center`, and `right`. Sets the alignment for the values of the column.  The default is `left` for most values. If no alignment is specified for the column, number values will be right aligned by default. This also affects how the heading of the column is aligned. If you want a different alignment for the column heading, use the [`alignHeading` column option](#alignHeading). By default, column headings are all center aligned. This can  be changed globally with the [`alignTableHeadings` table option](#aligntableheadings).
+Possible values are `left`, `center`, and `right`. Sets the alignment for the values of the column.  The default is `left` for most values. If no alignment is specified for the column, number values will be right aligned by default. This also affects how the heading of the column is aligned. If you want a different alignment for the column heading, use the [`alignHeading` column option](#alignheading). By default, column headings are all center aligned. This can  be changed globally with the [`alignTableHeadings` table option](#aligntableheadings).
 
 ##### alignHeading
 
@@ -195,3 +226,4 @@ For example, [the table option `frameChalk`](#framechalk) could also be set with
 As another example, if you just want the columns to show up in alphabetical order: \
 `tableString(data = [{ z: 3, y: 4, x:2 }]), [...Object.keys(data[0])].sort())` renders as
 ![sorted columns](./images/sorted.png)
+

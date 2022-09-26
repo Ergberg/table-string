@@ -1,5 +1,5 @@
 import assert from "assert";
-import { ansiDestruct } from "../idist/util/ansiDestruct.js";
+import { ansiDestruct } from "../instrumented/util/ansiDestruct.js";
 
 describe("ansiDestruct", function () {
   it("should treat null as ''", function () {

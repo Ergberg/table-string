@@ -1,4 +1,4 @@
-import { tableString } from "../idist/tableString.js";
+import { tableString } from "../instrumented/tableString.js";
 import chalk from "chalk";
 import assert from "assert";
 
@@ -19,7 +19,7 @@ describe("tableString", function () {
   test("Null", "", null);
   test(
     "frameChalk",
-    "\x1B[37m\x1B[40m┌──┐\x1B[49m\x1B[39m\n\x1B[37m\x1B[40m└──┘\x1B[49m\x1B[39m\n",
+    "\x1B[37m\x1B[40m┌──┐\x1B[49m\x1B[39m\n\x1B[37m\x1B[40m└──┘\x1B[49m\x1B[39m",
     [],
     [{ Values: "" }],
     {
@@ -35,9 +35,37 @@ describe("tableString", function () {
       "│ apples  │\n" +
       "│ oranges │\n" +
       "│ bananas │\n" +
-      "└─────────┘\n",
+      "└─────────┘",
     ["apples", "oranges", "bananas"]
   );
+
+  test(
+    "Simple array with h_line",
+    "┌─────────┐\n" +
+      "│ Values  │\n" +
+      "├─────────┤\n" +
+      "│ apples  │\n" +
+      "├─────────┤\n" +
+      "│ bananas │\n" +
+      "└─────────┘",
+    [{ Values: "apples", "<hr>": true }, "bananas"]
+  );
+
+  test(
+    "Simple array with numbers",
+    "┌────────┐\n" +
+      "│ Values │\n" +
+      "├────────┤\n" +
+      "│      1 │\n" +
+      "│      2 │\n" +
+      "│      3 │\n" +
+      "└────────┘",
+    [1, 2, 3]
+  );
+
+  test("Simple date value", "┌┐\n" + "││\n" + "└┘", [new Date()]);
+
+  test("Object with object", "┌┐\n" + "││\n" + "└┘", [{ o: {} }]);
 
   test(
     "Wide table",
@@ -47,7 +75,7 @@ describe("tableString", function () {
       "│ apples               │\n" +
       "│ oranges              │\n" +
       "│ bananas              │\n" +
-      "└──────────────────────┘\n",
+      "└──────────────────────┘",
     ["apples", "oranges", "bananas"],
     [{ name: "Values", width: 20 }]
   );
@@ -60,7 +88,7 @@ describe("tableString", function () {
       "│ John  │ Smith │\n" +
       "│ Jane  │ Doe   │\n" +
       "│ Emily │ Jones │\n" +
-      "└───────┴───────┘\n",
+      "└───────┴───────┘",
     [
       ["John", "Smith"],
       ["Jane", "Doe"],
@@ -76,7 +104,7 @@ describe("tableString", function () {
       "│ John      │ Smith    │\n" +
       "│ Jane      │ Doe      │\n" +
       "│ Emily     │ Jones    │\n" +
-      "└───────────┴──────────┘\n",
+      "└───────────┴──────────┘",
     [
       new Person("John", "Smith"),
       new Person("Jane", "Doe"),
@@ -93,7 +121,7 @@ describe("tableString", function () {
       "│ daughter │ Emily     │ Smith    │\n" +
       "│ father   │ John      │ Smith    │\n" +
       "│ mother   │ Jane      │ Smith    │\n" +
-      "└──────────┴───────────┴──────────┘\n",
+      "└──────────┴───────────┴──────────┘",
     {
       mother: new Person("Jane", "Smith"),
       father: new Person("John", "Smith"),
@@ -108,7 +136,7 @@ describe("tableString", function () {
       "│ mother   │ Jane      │ Smith    │\n" +
       "│ father   │ John      │ Smith    │\n" +
       "│ daughter │ Emily     │ Smith    │\n" +
-      "└──────────┴───────────┴──────────┘\n",
+      "└──────────┴───────────┴──────────┘",
     {
       mother: new Person("Jane", "Smith"),
       father: new Person("John", "Smith"),
@@ -126,7 +154,7 @@ describe("tableString", function () {
       "│ John      │\n" +
       "│ Jane      │\n" +
       "│ Emily     │\n" +
-      "└───────────┘\n",
+      "└───────────┘",
     [
       new Person("John", "Smith"),
       new Person("Jane", "Doe"),
@@ -143,7 +171,7 @@ describe("tableString", function () {
       "│ Smith     │ John       │\n" +
       "│ Doe       │ Jane       │\n" +
       "│ Jones     │ Emily      │\n" +
-      "└───────────┴────────────┘\n",
+      "└───────────┴────────────┘",
     [
       new Person2("John", "Smith"),
       new Person2("Jane", "Doe"),
@@ -160,7 +188,7 @@ describe("tableString", function () {
       "│ Smith     │ John       │\n" +
       "│ Doe       │ Jane       │\n" +
       "│ Jones     │ Emily      │\n" +
-      "└───────────┴────────────┘\n",
+      "└───────────┴────────────┘",
     [
       new Person("John", "Smith"),
       new Person("Jane", "Doe"),
@@ -175,7 +203,7 @@ describe("tableString", function () {
       "│ apples  │\n" +
       "│ oranges │\n" +
       "│ bananas │\n" +
-      "└─────────┘\n",
+      "└─────────┘",
     ["apples", "oranges", "bananas"],
     [{ name: "Values", heading: "" }]
   );
@@ -189,7 +217,7 @@ describe("tableString", function () {
       "│ blog_production │    Infinity │ Infinity │ blog      │ main     │\n" +
       "│ rule-2          │    Infinity │       90 │ .*        │ main     │\n" +
       "│ bugfix          │           5 │ Infinity │ .*-plugin │ bug-.*   │\n" +
-      "└─────────────────┴─────────────┴──────────┴───────────┴──────────┘\n",
+      "└─────────────────┴─────────────┴──────────┴───────────┴──────────┘",
     [
       {
         name: "default",
@@ -230,7 +258,7 @@ describe("tableString", function () {
       "│ John-Boy │ Smith    │\n" +
       "│ Jane     │ Doe      │\n" +
       "│ Emilie   │ Johannes │\n" +
-      "└──────────┴──────────┘\n",
+      "└──────────┴──────────┘",
     [
       ["John-Boy", "Smith"],
       ["Jane", "Doe"],
@@ -251,7 +279,7 @@ describe("tableString", function () {
       "│       0 │ apples  │\n" +
       "│       1 │ oranges │\n" +
       "│       2 │ bananas │\n" +
-      "└─────────┴─────────┘\n",
+      "└─────────┴─────────┘",
     (data = ["apples", "oranges", "bananas"]),
     [{ name: "", heading: "(index)" }],
     { index: [...data.keys()] }
@@ -266,7 +294,7 @@ describe("tableString", function () {
       "│ long     │\n" +
       "│ longer   │\n" +
       "│ the l... │\n" +
-      "└──────────┘\n",
+      "└──────────┘",
     ["long", "longer", "the longest"],
     [{ name: "Values", maxWidth: 8 }]
   );
@@ -295,7 +323,7 @@ describe("tableString", function () {
 
   test(
     "sorted columns",
-    "┌───┬───┬───┐\n│ x │ y │ z │\n├───┼───┼───┤\n│ 2 │ 4 │ 3 │\n└───┴───┴───┘\n",
+    "┌───┬───┬───┐\n│ x │ y │ z │\n├───┼───┼───┤\n│ 2 │ 4 │ 3 │\n└───┴───┴───┘",
     (data = [{ z: 3, y: 4, x: 2 }]),
     [...Object.keys(data[0])].sort()
   );
@@ -309,7 +337,7 @@ describe("tableString", function () {
       "\x1B[37m\x1B[40m│       3.99 \x1B[37m\x1B[40m│\x1B[31m Strawberries \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│       0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
       "\x1B[37m\x1B[40m│      12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m└────────────┴──────────────┘\x1B[49m\x1B[39m\n",
+      "\x1B[37m\x1B[40m└────────────┴──────────────┘\x1B[49m\x1B[39m",
     (data = [
       { price: 1.99, fruit: chalk.green("Apples") },
       { price: 3.99, fruit: chalk.red("Strawberries") },
@@ -330,7 +358,7 @@ describe("tableString", function () {
       "│ 1 │  apples │\n" +
       "│ 2 │ oranges │\n" +
       "│ 3 │ bananas │\n" +
-      "└───┴─────────┘\n",
+      "└───┴─────────┘",
     (data = ["apples", "oranges", "bananas"]),
     [{ name: "Values", align: "right" }],
     {
@@ -348,7 +376,7 @@ describe("tableString", function () {
       "│    oranges    │\n" +
       "│    bananas    │\n" +
       "│ a longer text │\n" +
-      "└───────────────┘\n",
+      "└───────────────┘",
     ["apples", "oranges", "bananas", "a longer text"],
     [{ name: "Values", align: "center" }]
   );
@@ -365,7 +393,7 @@ describe("tableString", function () {
       "│         │          │        │\n" +
       "│       5 │        6 │        │\n" +
       "│         │        5 │        │\n" +
-      "└─────────┴──────────┴────────┘\n",
+      "└─────────┴──────────┴────────┘",
     [
       "apples",
       { Goods: "oranges" },
@@ -386,7 +414,7 @@ describe("tableString", function () {
       "│   two and a ...   │\n" +
       "│   ...here wh...   │\n" +
       "│   ... musket...   │\n" +
-      "└───────────────────┘\n",
+      "└───────────────────┘",
     [
       "one by one",
       "two and a half",
@@ -405,7 +433,7 @@ describe("tableString", function () {
       "│...nd a...│\n" +
       "│...ere ...│\n" +
       "│...musk...│\n" +
-      "└──────────┘\n",
+      "└──────────┘",
     [
       "one by one",
       "two and a half",
@@ -420,9 +448,9 @@ describe("tableString", function () {
     "\x1B[1m┌────────┐\x1B[22m\n" +
       "\x1B[1m│ Values \x1B[1m│\x1B[22m\n" +
       "\x1B[1m├────────┤\x1B[22m\n" +
-      "│ 1      │\n" +
-      "│ 2      │\n" +
-      "└────────┘\n",
+      "│      1 │\n" +
+      "│      2 │\n" +
+      "└────────┘",
     [1, 2],
     undefined,
     {
@@ -434,11 +462,11 @@ describe("tableString", function () {
     "\x1B[40m\x1B[97m┌────────┐\x1B[39m\x1B[49m\n" +
       "\x1B[40m\x1B[97m│ Values \x1B[40m\x1B[97m│\x1B[39m\x1B[49m\n" +
       "\x1B[40m\x1B[97m├────────┤\x1B[39m\x1B[49m\n" +
-      "\x1B[44m\x1B[37m│ 1      \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[40m\x1B[37m│ 2      \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[44m\x1B[37m│ 3      \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[40m\x1B[37m│ 4      \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[44m\x1B[37m└────────┘\x1B[39m\x1B[49m\n",
+      "\x1B[44m\x1B[37m│      1 \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[40m\x1B[37m│      2 \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[44m\x1B[37m│      3 \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[40m\x1B[37m│      4 \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[44m\x1B[37m└────────┘\x1B[39m\x1B[49m",
     [1, 2, 3, 4],
     undefined,
     {

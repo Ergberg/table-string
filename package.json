@@ -9,7 +9,7 @@
     "/dist"
   ],
   "scripts": {
-    "compile": "rm -rf dist idist && tsc && npx nyc instrument dist idist",
+    "compile": "rm -rf dist instrumented && tsc && npx nyc instrument dist instrumented",
     "test": "mocha",
     "coverage": "nyc npm run test"
   },

@@ -1,3 +1,4 @@
+import { H_LINE } from "../tableString.js";
 import { ColumnOption, ColumnOptions } from "../types.js";
 import { columns } from "./tableState.js";
 
@@ -34,12 +35,11 @@ function additionalColumns(
     columns.push({
       name: "Values",
       heading: "Values",
-      align: "left",
       padding: 1,
     });
   }
   if (hasIndex && !has(columns, "")) {
-    columns.unshift({ name: "", heading: "", align: "left", padding: 1 });
+    columns.unshift({ name: "", heading: "", padding: 1 });
   }
 }
 
@@ -50,7 +50,7 @@ export function has(columns: ColumnOption[], key: string) {
 function keyVisibilityFilter() {
   return (obj: object) => {
     const res = [...Object.keys(obj)].filter(
-      (k) => typeof obj[k] !== "function"
+      (k) => k!==H_LINE && typeof obj[k] !== "function"
     );
     return res;
   };

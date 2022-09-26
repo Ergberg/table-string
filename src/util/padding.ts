@@ -52,7 +52,13 @@ export function padBoth(
     maxWidth,
     "center"
   );
-  const w = trimmed.length - width + minWidth + 2 * padding;
-  const start = first.padStart(Math.trunc((w - trimmed.length) / 2), fill);
-  return (start + trimmed).padEnd(w, fill) + last;
+  const w = (minWidth - width) / 2;
+  return (
+    first +
+    (fill.repeat(padding + w) + trimmed).padEnd(
+      trimmed.length - width + minWidth + 2 * padding,
+      fill
+    ) +
+    last
+  );
 }

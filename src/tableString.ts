@@ -26,6 +26,8 @@ export function tableString(
   return genTable(data, frame.characters);
 }
 
+export const H_LINE="<hr>"
+
 function recurseWithArrayFromObject(
   data: object,
   columns: ColumnOptions,
