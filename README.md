@@ -94,10 +94,11 @@ Printing `tableString(flatten([{a:"one line", b: "two\nlines"}]))` will look lik
 
 ![flatten](/images/flatten1.png)
 
-With `flatten`, it is also possible to use `tabelString` results as values in `tableString` tables 😏
+With `flatten`, it is also possible to use `tableString` results as values in `tableString` tables 😏
 
 ![flatten](/images/flatten2.png)
 
+The `flatten` function provides no special treatment for ANSI color escapes. There are no mechanisms to continue open color settings across tables rows. It is recommended to close/reset all color codes before newlines.  
 
 ## Configuration
 
