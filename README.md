@@ -132,7 +132,7 @@ frame.characters = stars.characters   // '*', '*', '*' ...
 ```
 To define your characters, assign your own object to `frame.characters` 
 ```js
-frame.characters {
+frame.characters = {
   topRow: "┌─┬┐",
   normal: "│ ││",
   h_line: "├─┼┤",
