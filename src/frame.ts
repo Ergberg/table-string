@@ -7,6 +7,14 @@ export let frame = {
     bottom: "└─┴┘",
   },
 };
+export let standard = {
+  characters: {
+    topRow: "┌─┬┐",
+    normal: "│ ││",
+    h_line: "├─┼┤",
+    bottom: "└─┴┘",
+  },
+};
 /* They can be redefined, e.g. with frame.characters = double.characters */
 export const double = {
   characters: {
@@ -23,5 +31,31 @@ export const ascii = {
     normal: "| ||",
     h_line: "|-+|",
     bottom: "'-''",
+  },
+};
+
+export const dots = {
+  characters: {
+    topRow: "....",
+    normal: ". ..",
+    h_line: "....",
+    bottom: "....",
+  },
+};
+
+export const stars = {
+  characters: {
+    topRow: "****",
+    normal: "* **",
+    h_line: "****",
+    bottom: "****",
+  },
+};
+export const colon = {
+  characters: {
+    topRow: "::::",
+    normal: ": ::",
+    h_line: "::::",
+    bottom: "::::",
   },
 };

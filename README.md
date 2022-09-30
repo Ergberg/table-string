@@ -51,7 +51,7 @@ As I was looking into this, I noticed that the output of `console.table()` looks
 
 I've intentionally omitted some functions from `console.table()` because they give the output a more technical, debugger-like look:  
  * there is no coloring of values based on their JavaScript type
- * there are no quotes around strings or 'm' after BigInts
+ * there are no quotes around strings or 'm' after bigints
  * null values and values of type "function" are not rendered
  * for arrays, the index column is included only if explicitly specified
  * the index column has no header by default 
@@ -82,11 +82,15 @@ There are other table packages with different targets. The table-string package 
 
 The options are typically simple values or key-value pairs. But sometimes it is also helpful to use [JavaScript functions to compute option](#using-functions-in-options).   
 
-### flatten
+### Flatten
+
+The `flatten` function can turn [multiline string values](#flatten-multiline-strings) into multiple rows and [nested objects](#flatten-nested-objects) into additional columns. 
+
+#### Flatten multiline strings
 
 Newlines in your data will break the output of tableString. Multiple lines of text in a table cell are not supported. But it is possible to substitute multiline strings with multiple rows. The `flatten` function will do that for you:
 
-```
+```js
 flatten([{a:"one line", b: "two\nlines"}]) == [{a:"one line", b:"two"}, {a:"", b:"lines"}]
 ```
 
@@ -100,13 +104,49 @@ With `flatten`, it is also possible to use `tableString` results as values in `t
 
 The `flatten` function provides no special treatment for ANSI color escapes. There are no mechanisms to continue open color settings across tables rows. It is recommended to close/reset all color codes before newlines.  
 
+#### Flatten nested objects
+
+The `flatten` function has an optional second parameter. It is called `objectDepth`. Its default value is `0`.
+Setting `objectDepth` to `1` will replace all objects that `tableString` would show as `[object Object]` with columns holding the values of their properties. Of course those property values might again show as `[object Object]` Setting `objectDepth` to higher values will also replace those with their properties. To replace objects at any depth set `objectDepth` to `Infinity`. The names of the added columns are formed by chaining the names of the nested objects. It is an error if such a column name already exists. If an object's `toString()` returns a string different from `[object Object]` this result is used to show the object and the object is not turned into columns.
+  
+Example:
+```js 
+flatten([{ a: { b: "c" } }]) === [{ a: { b: "c" } }] // objectDepth not specified
+flatten([{ a: { b: "c" } }], 1) === [{ "a.b": "c" }] // nested object's property is replaced by a new column
+flatten([{ a: { b: { c: "d" } } }], 1) === [{ "a.b": { c: "d" } }] // only outer object is replaced with objectDepth === 1
+flatten([{ a: { b: { c: "d" } } }], 2) === [{ "a.b.c": "d" }] // also inner object is replaced with objectDepth === 2
+flatten([{ a: { b: "c" }, "a.b": "exists" }], 1) // Error: Flattening object at depth 1: property "a.b" already exists
+
+tableString(flatten([{host:}])
+```
+
+### frame.characters
+
+By default, the border of the table and the lines are 'drawn' with graphical single line characters: '┌', '─', '┐' ...\
+You can change this by assigning to `frame.characters`. Predefined values are:
+```js
+frame.characters = default.characters // '┌', '─', '┐' ...
+frame.characters = double.characters  // '╔', '═', '╗' ...
+frame.characters = ascii.characters   // '.', '-', '.' ...
+frame.characters = stars.characters   // '*', '*', '*' ...
+```
+To define your characters, assign your own object to `frame.characters` 
+```js
+frame.characters {
+  topRow: "┌─┬┐",
+  normal: "│ ││",
+  h_line: "├─┼┤",
+  bottom: "└─┴┘",
+};
+```
+
 ## Configuration
 
 ### Data
 
 In general, `tableString` is called with an array[^1]. The elements of the array are used to populate the rows of the table. Values that are not strings, numbers, or objects are ignored. Strings can contain ANSI color escapes. If they occur at the beginning or the end of the string, they will be automatically extended if the string needs to be padded to fill the column width.  
 
-If the array contains primitive values, i.e. strings, numbers, or BigInts, those are shown in a column called "Values". Non primitive values are objects. These objects have properties. Each property defines a column of the table and the property value of an row's object is the value in the column for that row. Columns values should be primitive values. More complex values are likely show as `"[object Object]"`. **String values with newlines break the table layout**. To use multiline strings as values, first [`flatten` the table](#flatten).
+If the array contains primitive values, they are displayed in a column called "Values". This is true for strings, booleans, numbers and bigints.  The other primitives, i.e. symbol, null and undefined, are ignored. Non primitive values are objects. These objects have properties. Each property defines a column of the table and the property value of an row's object is the value in the column for that row. Columns values should be primitive values. More complex values are likely show as `"[object Object]"`. If they define a `toString()` function, the result of the `toString()` function will be used to show the object. **String values with newlines break the table layout**. To use multiline strings as values, first [`flatten` the table](#flatten). The [`flatten` function](#flatten) can also be used to replace objects that show as `"[object Object]"` with columns of their attributes.
 
 There is one special property called "**`<hr>`**". If the "`<hr>`" property is defined in the object for a row, e.g. `{ .... "<hr>": true}`, an horizontal line is included after that row. 
 

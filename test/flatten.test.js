@@ -3,12 +3,12 @@ import { tableString } from "../instrumented/tableString.js";
 import { flatten } from "../dist/flatten.js";
 
 describe("flatten", function () {
-  function test(what, expected, data) {
+  function test(what, expected, data, depth) {
     it(
       (what ? what + " " : "") +
         (expected === undefined ? "" : "should render as expected"),
       function () {
-        assert.deepStrictEqual(flatten(data), expected);
+        assert.deepStrictEqual(flatten(data, depth), expected);
       }
     );
   }
@@ -18,6 +18,46 @@ describe("flatten", function () {
   test("two line string", ["a", "b"], ["a\nb"]);
   test("three line string", ["a", "b", "c"], ["a\nb\nc"]);
   test("tow one liner", [{ a: "a", b: "b" }], [{ a: "a", b: "b" }]);
+
+  test("objectDepth === 0", [{ a: { b: "c" } }], [{ a: { b: "c" } }]);
+  test("objectDepth === 1", [{ "a.b": "c" }], [{ a: { b: "c" } }], 1);
+  test(
+    "objectDepth === 1 with deep object",
+    [{ "a.b": { c: "d" } }],
+    [{ a: { b: { c: "d" } } }],
+    1
+  );
+  test("objectDepth === 2", [{ "a.b.c": "d" }], [{ a: { b: { c: "d" } } }], 2);
+
+  it("throws an exception if the target column exists", function () {
+    assert.throws(
+      () =>
+        console.log(
+          'flatten([{ a: { b: "c" }, "a.b": "exists" }], 1) :>> ',
+          flatten([{ a: { b: "c" }, "a.b": "exists" }], 1)
+        ),
+      /Error: Flattening object: property ".*?" already exists/
+    );
+  });
+
+  test(
+    "nested objects",
+    [
+      {
+        "deep.person.firstName": "a",
+        "deep.person.lastName": "b",
+      },
+      {
+        "person.firstName": "c",
+        "person.lastName": "d",
+      },
+    ],
+    [
+      { deep: { person: new Person2("a", "b") } },
+      { person: new Person2("c", "d") },
+    ],
+    2
+  );
   test(
     "one & two",
     [
@@ -86,32 +126,26 @@ describe("flatten", function () {
       },
       {
         a: "│ Values │",
-        b: "",
         c: "│ Values │",
       },
       {
         a: "├────────┤",
-        b: "",
         c: "├────────┤",
       },
       {
         a: "│      1 │",
-        b: "",
         c: "│ a      │",
       },
       {
         a: "│      2 │",
-        b: "",
         c: "│      6 │",
       },
       {
         a: "│ false  │",
-        b: "",
         c: "│ c      │",
       },
       {
         a: "└────────┘",
-        b: "",
         c: "└────────┘",
       },
     ],
@@ -124,3 +158,13 @@ describe("flatten", function () {
     ]
   );
 });
+
+function Person(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.toString = () => firstName + " " + lastName;
+}
+function Person2(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+}

@@ -1,4 +1,4 @@
-import { tableString } from "../instrumented/tableString.js";
+import { tableString, flatten } from "../instrumented/index.js";
 import chalk from "chalk";
 import assert from "assert";
 
@@ -464,6 +464,19 @@ describe("tableString", function () {
     {
       headerChalk: chalk.bold("x"),
     }
+  );
+  test(
+    "Object with toString()",
+    "┌────────┐\n" +
+      "│ person │\n" +
+      "├────────┤\n" +
+      "│ a b    │\n" +
+      "│ c d    │\n" +
+      "└────────┘",
+    flatten([
+      { person: new Person("a", "b") },
+      { person: new Person("c", "d") },
+    ])
   );
   test(
     "alternative chalk",
