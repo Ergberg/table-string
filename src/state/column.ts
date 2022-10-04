@@ -1,6 +1,7 @@
-import { H_LINE } from "../tableString.js";
-import { ColumnOption, ColumnOptions } from "../types.js";
-import { columns } from "./tableState.js";
+import { TS_HORIZONTAL_LINE } from "./../constants.js";
+import { Chalk, ColumnOption, ColumnOptions } from "../types.js";
+import { ansiDestruct } from "../util/ansiDestruct.js";
+import { options } from "./tableState.js";
 
 export function initColumn(
   data: any[],
@@ -10,72 +11,84 @@ export function initColumn(
 ) {
   const keyFilter = keyVisibilityFilter();
   columnOptions ??= namesFromData(data, keyFilter);
-  columns.length = 0;
-  columnOptions.forEach((e) =>
-    columns.push({
-      name: name(e),
-      heading: heading(e),
-      padding: padding(e),
-      ...width(e),
-      align: align(e),
-      alignHeading: alignHeading(e),
-    })
+  options.columns.length = 0;
+  options.internal.length = 0;
+  columnOptions.forEach(
+    (e) => (
+      options.columns.push({
+        name: name(e),
+        heading: heading(e),
+        padding: padding(e),
+        ...width(e),
+        align: align(e),
+        alignHeading: alignHeading(e),
+      }),
+      options.internal.push(
+        setDefault({
+          chalk: chalk(e),
+          alternateChalk: alternateChalk(e),
+        })
+      )
+    )
   );
 
-  additionalColumns(columns, primitives, hasIndex);
+  additionalColumns(primitives, hasIndex);
 }
 
-function additionalColumns(
-  columns: ColumnOption[],
-  primitives: any[],
-  hasIndex: any
-) {
+function additionalColumns(primitives: any[], hasIndex: any) {
   const hasPrimitives = primitives.some((primitive: any) => primitive);
-  if (hasPrimitives && !has(columns, "Values")) {
-    columns.push({
+  if (hasPrimitives && !has(options.columns, "Values")) {
+    options.columns.push({
       name: "Values",
       heading: "Values",
       padding: 1,
     });
+    options.internal.push({
+      chalk: undefined,
+      alternateChalk: undefined,
+    });
   }
-  if (hasIndex && !has(columns, "")) {
-    columns.unshift({ name: "", heading: "", padding: 1 });
+
+  if (hasIndex && !has(options.columns, "")) {
+    options.columns.unshift({ name: "", heading: "", padding: 1 });
+    options.internal.unshift({
+      chalk: undefined,
+      alternateChalk: undefined,
+    });
   }
 }
 
-export function has(columns: ColumnOption[], key: string) {
+export function has(columns: ColumnOptions, key: string) {
   return columns.some((column) => column.name === key);
 }
 
 function keyVisibilityFilter() {
   return (obj: object) => {
     const res = [...Object.keys(obj)].filter(
-      (k) => k!==H_LINE && typeof obj[k] !== "function"
+      (k) => k !== TS_HORIZONTAL_LINE && typeof obj[k] !== "function"
     );
     return res;
   };
 }
 
-function namesFromData(data: any[], keys: (obj: object) => string[]) {
+function namesFromData(
+  data: any[],
+  keys: (obj: object) => string[]
+): ColumnOptions {
   return [
-    ...new Set(
+    ...new Set<string>(
       data.reduce((res: string[], obj) => {
         return obj !== null && typeof obj === "object"
           ? [...res, ...keys(obj)]
           : res;
       }, [])
     ),
-  ] as string[];
+  ].map((name) => ({ name }));
 }
 
-function name(e: string | ColumnOption | { [index: string]: string }) {
+function name(e: ColumnOption) {
   let k: any[];
-  const name =
-    typeof e === "string"
-      ? e
-      : (k = Object.keys(e)).length === 1
-      ? k[0]
-      : e["name"];
+  const name = e.name;
   if (name === undefined)
     throw Error(
       `Column option {${Object.keys(e)
@@ -85,30 +98,17 @@ function name(e: string | ColumnOption | { [index: string]: string }) {
   return name;
 }
 
-function heading(e: string | { [s: string]: any }) {
-  let v: any[];
-  return typeof e === "string"
-    ? e
-    : (v = Object.values(e)).length === 1
-    ? v[0]
-    : e["heading"] ?? e["name"];
+function heading(e: ColumnOption) {
+  return e.heading ?? e.name;
 }
 
-function padding(e) {
-  return typeof e === "string" || Object.values(e).length === 1
-    ? 1
-    : e["padding"] ?? 1;
+function padding(e: ColumnOption) {
+  return e.padding ?? 1;
 }
 
-function width(e) {
-  const minWidth =
-    typeof e === "string" || Object.values(e).length === 1
-      ? undefined
-      : e["minWidth"] ?? e["width"];
-  const maxWidth =
-    typeof e === "string" || Object.values(e).length === 1
-      ? undefined
-      : e["maxWidth"] ?? e["width"];
+function width(e: ColumnOption) {
+  const minWidth = e.minWidth ?? e["width"];
+  const maxWidth = e.maxWidth ?? e["width"];
   if (minWidth !== undefined && maxWidth !== undefined && maxWidth < minWidth) {
     throw Error(
       `Column "${e["name"]}": minWidth (${minWidth}) must not exceed maxWidth (${maxWidth})`
@@ -117,14 +117,27 @@ function width(e) {
   return { minWidth, maxWidth };
 }
 
-function align(e) {
-  return typeof e === "string" || Object.values(e).length === 1
-    ? undefined
-    : e["align"];
+function align(e: ColumnOption) {
+  return e.align ?? "based on type";
 }
 
-function alignHeading(e) {
-  return typeof e === "string" || Object.values(e).length === 1
-    ? undefined
-    : e["alignHeading"] ?? e["align"];
+function alignHeading(e: ColumnOption) {
+  return e.alignHeading ?? e.align;
+}
+function chalk(e: ColumnOption): Chalk {
+  if (e.chalk === undefined) return undefined;
+  const ansi = ansiDestruct(e.chalk);
+  return { start: ansi.first, end: ansi.last };
+}
+function alternateChalk(e: ColumnOption): Chalk {
+  if (e.alternateChalk === undefined) return undefined;
+  const ansi = ansiDestruct(e.alternateChalk);
+  return { start: ansi.first, end: ansi.last };
+}
+function setDefault(column: { chalk: Chalk; alternateChalk: Chalk }): {
+  chalk?: Chalk;
+  alternateChalk?: Chalk;
+} {
+  column.alternateChalk ??= column.chalk;
+  return column;
 }

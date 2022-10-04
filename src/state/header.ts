@@ -1,9 +1,9 @@
 import { ColumnOption } from "../types.js";
-import { header } from "./tableState.js";
+import { header, options } from "./tableState.js";
 
-export function initHeader(columns: ColumnOption[]) {
-  fromHeadings(columns);
-  removeStaleEntries(columns);
+export function initHeader() {
+  fromHeadings(options.columns);
+  removeStaleEntries(options.columns);
 }
 
 function fromHeadings(columns: ColumnOption[]) {

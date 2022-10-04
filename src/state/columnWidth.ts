@@ -1,12 +1,12 @@
-import { columns } from "./tableState.js";
 import { value } from "../util/value.js";
 import { ansiDestruct } from "../util/ansiDestruct.js";
 import { ColumnOption } from "../types.js";
+import { options } from "./tableState.js";
 
 export function initColumnWidth(data: any[], primitives: any[], index: any) {
-  initWithHeadings(columns);
-  maximizeWithValues(columns, data, primitives, index);
-  cappedByMaxWidth(columns);
+  initWithHeadings(options.columns);
+  maximizeWithValues(options.columns, data, primitives, index);
+  cappedByMaxWidth(options.columns);
 }
 
 function initWithHeadings(columns: ColumnOption[]) {
@@ -27,10 +27,7 @@ function maximizeWithValues(
   data.forEach((row: any, rowIdx: number) => {
     columns.forEach((column: ColumnOption) => {
       const s = value(row, column.name, primitives, index, rowIdx);
-      column.minWidth = Math.max(
-        column.minWidth,
-        ansiDestruct(s).width
-      );
+      column.minWidth = Math.max(column.minWidth, ansiDestruct(s).width);
     });
   });
 }

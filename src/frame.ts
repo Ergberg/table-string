@@ -59,3 +59,11 @@ export const colon = {
     bottom: "::::",
   },
 };
+export const space = {
+  characters: {
+    topRow: "    ",
+    normal: "    ",
+    h_line: "    ",
+    bottom: "    ",
+  },
+};

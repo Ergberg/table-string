@@ -3,9 +3,11 @@ import chalk from "chalk";
 import assert from "assert";
 
 let data;
-chalk.level = 1;
+chalk.level = 3;
+console.log("chalk.supportsColor :>> ", chalk.supportsColor);
 describe("tableString", function () {
   function test(what, expected, data, columnOptions, tableOptions) {
+    if (what === "-") return;
     it(
       (what ? what + " " : "") +
         (expected === undefined ? "" : "should render as expected"),
@@ -48,7 +50,7 @@ describe("tableString", function () {
       "├─────────┤\n" +
       "│ bananas │\n" +
       "└─────────┘",
-    [{ Values: "apples", "<hr>": true }, "bananas"]
+    [{ Values: "apples", "ts:horizontalLine": true }, "bananas"]
   );
 
   test(
@@ -119,6 +121,35 @@ describe("tableString", function () {
       new Person("Emily", "Jones"),
     ],
     [{ name: "firstName", align: "left" }, "lastName"]
+  );
+
+  test(
+    "Color column Persons",
+    "┌───────────┬──────────┐\n" +
+      "│ firstName │ lastName │\n" +
+      "├───────────┼──────────┤\n" +
+      "│\x1B[44m\x1B[37m John      \x1B[39m\x1B[49m│\x1B[100m\x1B[37m Smith    \x1B[39m\x1B[49m│\n" +
+      "│\x1B[47m\x1B[32m Jane      \x1B[39m\x1B[49m│\x1B[40m\x1B[33m Doe      \x1B[39m\x1B[49m│\n" +
+      "│\x1B[44m\x1B[37m Emily     \x1B[39m\x1B[49m│\x1B[100m\x1B[37m Jones    \x1B[39m\x1B[49m│\n" +
+      "└───────────┴──────────┘",
+    [
+      new Person("John", "Smith"),
+      new Person("Jane", "Doe"),
+      new Person("Emily", "Jones"),
+    ],
+    [
+      {
+        name: "firstName",
+        align: "left",
+        chalk: chalk.bgBlue.white(" "),
+        alternateChalk: chalk.bgWhite.green(" "),
+      },
+      {
+        name: "lastName",
+        chalk: chalk.bgGrey.white(" "),
+        alternateChalk: chalk.bgBlack.yellow(" "),
+      },
+    ]
   );
 
   test(
@@ -329,6 +360,9 @@ describe("tableString", function () {
     );
   });
 
+  it("throws an exception on unknown table options", function () {
+    assert.throws(() => tableString([], [], { "!unknown!": true }));
+  });
   test(
     "sorted columns",
     "┌───┬───┬───┐\n│ x │ y │ z │\n├───┼───┼───┤\n│ 2 │ 4 │ 3 │\n└───┴───┴───┘",
@@ -338,23 +372,18 @@ describe("tableString", function () {
 
   test(
     "Colorful content",
-    "\x1B[37m\x1B[40m┌────────────┬──────────────┐\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│ Price in $ \x1B[37m\x1B[40m│    Fruit     \x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m├────────────┼──────────────┤\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│       1.99 \x1B[37m\x1B[40m│\x1B[32m Apples       \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│       3.99 \x1B[37m\x1B[40m│\x1B[31m Strawberries \x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│       0.99 \x1B[37m\x1B[40m│\x1B[44m\x1B[33m Bananas      \x1B[39m\x1B[49m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m│      12.99 \x1B[37m\x1B[40m│\x1B[34m\x1B[47m Bilberries   \x1B[49m\x1B[39m\x1B[37m\x1B[40m│\x1B[49m\x1B[39m\n" +
-      "\x1B[37m\x1B[40m└────────────┴──────────────┘\x1B[49m\x1B[39m",
+    "\u001b[48;2;255;102;0m\u001b[30m┌────────────┬──────────────┐\u001b[39m\u001b[49m\n\u001b[48;2;255;102;0m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;255;170;0m\u001b[30m Price in $ \u001b[39m\u001b[49m\u001b[48;2;255;102;0m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;255;170;0m\u001b[30m    Fruit     \u001b[39m\u001b[49m\u001b[48;2;255;102;0m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;255;102;0m\u001b[30m├────────────┼──────────────┤\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m       1.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[32m Apples       \u001b[39m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m       3.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[31m Strawberries \u001b[39m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m       0.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[44m\u001b[33m Bananas      \u001b[39m\u001b[49m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m      12.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[48;2;255;255;255m Bilberries   \u001b[49m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m└────────────┴──────────────┘\u001b[39m\u001b[49m",
     (data = [
       { price: 1.99, fruit: chalk.green("Apples") },
       { price: 3.99, fruit: chalk.red("Strawberries") },
       { price: 0.99, fruit: chalk.bgBlue.yellow("Bananas") },
-      { price: 12.99, fruit: chalk.blue.bgWhite("Bilberries") },
+      { price: 12.99, fruit: chalk.bgHex("#ffffff")("Bilberries") },
     ]),
     [{ price: "Price in $" }, { fruit: "Fruit" }],
     {
-      frameChalk: chalk.white.bgBlack(" "),
+      tableChalk: chalk.bgHex("#ddddbb").black(" "),
+      headerChalk: chalk.bgHex("#ffaa00").black(" "),
+      headerFrameChalk: chalk.bgHex("#ff6600").black(" "),
     }
   );
 
@@ -453,9 +482,9 @@ describe("tableString", function () {
 
   test(
     "heading chalk",
-    "\x1B[1m┌────────┐\x1B[22m\n" +
-      "\x1B[1m│ Values \x1B[1m│\x1B[22m\n" +
-      "\x1B[1m├────────┤\x1B[22m\n" +
+    "┌────────┐\n" +
+      "│\x1B[1m Values \x1B[22m│\n" +
+      "├────────┤\n" +
       "│      1 │\n" +
       "│      2 │\n" +
       "└────────┘",
@@ -479,21 +508,36 @@ describe("tableString", function () {
     ])
   );
   test(
-    "alternative chalk",
-    "\x1B[40m\x1B[97m┌────────┐\x1B[39m\x1B[49m\n" +
-      "\x1B[40m\x1B[97m│ Values \x1B[40m\x1B[97m│\x1B[39m\x1B[49m\n" +
-      "\x1B[40m\x1B[97m├────────┤\x1B[39m\x1B[49m\n" +
-      "\x1B[44m\x1B[37m│      1 \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[40m\x1B[37m│      2 \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[44m\x1B[37m│      3 \x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[40m\x1B[37m│      4 \x1B[40m\x1B[37m│\x1B[39m\x1B[49m\n" +
-      "\x1B[44m\x1B[37m└────────┘\x1B[39m\x1B[49m",
+    "alternate chalk 1",
+    "┌────────┐\n" +
+      "│ Values │\n" +
+      "├────────┤\n" +
+      "│      1 │\n" +
+      "│\x1B[44m\x1B[37m      2 \x1B[39m\x1B[49m│\n" +
+      "│      3 │\n" +
+      "│\x1B[44m\x1B[37m      4 \x1B[39m\x1B[49m│\n" +
+      "└────────┘",
     [1, 2, 3, 4],
     undefined,
     {
-      alternativeChalk: chalk.bgBlack.white("x"),
-      frameChalk: chalk.bgBlue.white("x"),
-      headerChalk: chalk.bgBlack.whiteBright("x"),
+      alternateTableChalk: chalk.bgBlue.white("x"),
+    }
+  );
+  test(
+    "alternate chalk 2",
+    "┌────────┐\n" +
+      "│ Values │\n" +
+      "├────────┤\n" +
+      "│      1 │\n" +
+      "\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\x1B[44m\x1B[37m      2 \x1B[39m\x1B[49m\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "│      3 │\n" +
+      "\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\x1B[44m\x1B[37m      4 \x1B[39m\x1B[49m\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "└────────┘",
+    [1, 2, 3, 4],
+    undefined,
+    {
+      alternateTableChalk: chalk.bgBlue.white("x"),
+      alternateFrameChalk: chalk.bgBlue.white("x"),
     }
   );
 });

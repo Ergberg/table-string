@@ -1,5 +1,13 @@
 import ansiRegex from "ansi-regex";
+import { basedOnType } from "../genTable.js";
+import { Alignment } from "../types.js";
 const ansi = `(${ansiRegex().source})`;
+export type Parts = {
+  width: number;
+  first: string;
+  trimmed: string;
+  last: string;
+};
 
 /**
  * Checks wether the string is surrounded by ANSI color codes and splits it apart.
@@ -7,15 +15,16 @@ const ansi = `(${ansiRegex().source})`;
  * @param value
  * @param maxWidth optional maximum width for the trimmed part
  * @param align optional "left", "center" or "right"
- * @param dots optional, default 3, replace omitted text with cnt dots  
+ * @param dots optional, default 3, replace omitted text with cnt dots
  * @returns a tuple {width, first, trimmed, last}
  */
 export function ansiDestruct(
   value: any,
   maxWidth?: number,
-  align?: "right" | "center" | "left",
-  dots?:number
+  align?: Alignment,
+  dots?: number
 ) {
+  align = basedOnType(align, value);
   const ansis = ("" + (value ?? "")).split(new RegExp(ansi));
   let done = false;
   let i = 0;

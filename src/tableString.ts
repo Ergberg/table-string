@@ -1,7 +1,8 @@
 import { init } from "./state/tableState.js";
 import { genTable } from "./genTable.js";
 import { frame } from "./frame.js";
-import { ColumnOptions, TableOptions } from "./types.js";
+import { AbbreviatedColumnOptions, ColumnOptions, TableOptions } from "./types.js";
+import { abbreviated } from "./abbreviations.js";
 
 /**
  * A function that converts objects into a string that prints out as a table.
@@ -13,7 +14,7 @@ import { ColumnOptions, TableOptions } from "./types.js";
  */
 export function tableString(
   data: object,
-  columnOptions?: ColumnOptions,
+  columnOptions?: AbbreviatedColumnOptions,
   tableOptions?: TableOptions
 ): string {
   if (typeof data !== "object" || data === null) return "";
@@ -22,15 +23,14 @@ export function tableString(
     return recurseWithArrayFromObject(data, columnOptions, tableOptions);
   }
 
-  init(data, columnOptions, tableOptions);
+  init(data, abbreviated(columnOptions), tableOptions);
   return genTable(data, frame.characters);
 }
 
-export const H_LINE="<hr>"
 
 function recurseWithArrayFromObject(
   data: object,
-  columns: ColumnOptions,
+  columns: AbbreviatedColumnOptions,
   options: TableOptions
 ) {
   const values = [];

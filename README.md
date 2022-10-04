@@ -1,10 +1,12 @@
 # table-string
 
-Originally, I was looking for a replacement for `console.table()` because I missed this function in Cloudflare workers.
+A package to generate tables on TTYs.
 
-So `tableString()` is a function originally inspired by `console.table()` but with the following main differences:
+![colorful table](images/appetizer.png)
 
-* First, it doesn't output anything to the console, but returns a string.
+`tableString()` is a function originally inspired by `console.table()` but with the following main differences:
+
+* First, it doesn't output anything to the console directly, but returns a string that can be used in different ways.
 * More importantly, its output looks less technical. It aims to simplify the creation of meaningful tables for CLIs. 
 
 ## Purpose
@@ -148,7 +150,7 @@ In general, `tableString` is called with an array[^1]. The elements of the array
 
 If the array contains primitive values, they are displayed in a column called "Values". This is true for strings, booleans, numbers and bigints.  The other primitives, i.e. symbol, null and undefined, are ignored. Non primitive values are objects. These objects have properties. Each property defines a column of the table and the property value of an row's object is the value in the column for that row. Columns values should be primitive values. More complex values are likely show as `"[object Object]"`. If they define a `toString()` function, the result of the `toString()` function will be used to show the object. **String values with newlines break the table layout**. To use multiline strings as values, first [`flatten` the table](#flatten). The [`flatten` function](#flatten) can also be used to replace objects that show as `"[object Object]"` with columns of their attributes.
 
-There is one special property called "**`<hr>`**". If the "`<hr>`" property is defined in the object for a row, e.g. `{ .... "<hr>": true}`, an horizontal line is included after that row. 
+There is one special property called "**`ts:horizontalLine`**". If the "`ts:horizontalLine`" property is defined in the object for a row, e.g. `{ .... "ts:horizontalLine": true}`, an horizontal line is drawn after that row. 
 
   
 
