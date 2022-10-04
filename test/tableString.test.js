@@ -1,10 +1,16 @@
-import { tableString, flatten } from "../instrumented/index.js";
+import {
+  tableString,
+  flatten,
+  frame,
+  space,
+  standard,
+} from "../instrumented/index.js";
 import chalk from "chalk";
 import assert from "assert";
 
 let data;
 chalk.level = 3;
-console.log("chalk.supportsColor :>> ", chalk.supportsColor);
+
 describe("tableString", function () {
   function test(what, expected, data, columnOptions, tableOptions) {
     if (what === "-") return;
@@ -386,7 +392,7 @@ describe("tableString", function () {
       headerFrameChalk: chalk.bgHex("#ff6600").black(" "),
     }
   );
-
+  
   test(
     "Right alignment for values and headings",
     "┌───┬─────────┐\n" +

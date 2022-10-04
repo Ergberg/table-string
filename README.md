@@ -39,7 +39,9 @@ By adding two parameters we can control the columns and table options:
 tableString(data,
   [{ price: "Price in $" }, { fruit: "Fruit" }],
   {
-    frameChalk: chalk.white.bgBlack(" "),
+    tableChalk: chalk.bgHex("#ddddbb").black(" "),
+    headerChalk: chalk.bgHex("#0088cc").black(" "),
+    headerFrameChalk: chalk.bgHex("#004466").white(" "),
   }
 );
 ```
