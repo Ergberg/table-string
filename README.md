@@ -119,7 +119,7 @@ flatten([{ a: { b: "c" } }]) === [{ a: { b: "c" } }] // objectDepth not specifie
 flatten([{ a: { b: "c" } }], 1) === [{ "a.b": "c" }] // nested object's property is replaced by a new column
 flatten([{ a: { b: { c: "d" } } }], 1) === [{ "a.b": { c: "d" } }] // only outer object is replaced with objectDepth === 1
 flatten([{ a: { b: { c: "d" } } }], 2) === [{ "a.b.c": "d" }] // also inner object is replaced with objectDepth === 2
-flatten([{ a: { b: "c" }, "a.b": "exists" }], 1) // Error: Flattening object at depth 1: property "a.b" already exists
+flatten([{ a: { b: "c" }, "a.b": "exists" }], 1) // Error: Flattening object: property "a.b" already exists
 ```
 
 ### frame.characters
@@ -127,10 +127,11 @@ flatten([{ a: { b: "c" }, "a.b": "exists" }], 1) // Error: Flattening object at 
 By default, the border of the table and the lines are 'drawn' with graphical single line characters: '┌', '─', '┐' ...\
 You can change this by assigning to `frame.characters`. Predefined values are:
 ```js
-frame.characters = default.characters // '┌', '─', '┐' ...
+frame.characters = standard.characters // '┌', '─', '┐' ...
 frame.characters = double.characters  // '╔', '═', '╗' ...
 frame.characters = ascii.characters   // '.', '-', '.' ...
 frame.characters = stars.characters   // '*', '*', '*' ...
+frame.characters = space.characters   // ' ', ' ', ' ' ...
 ```
 To define your characters, assign your own object to `frame.characters` 
 ```js
@@ -150,7 +151,11 @@ In general, `tableString` is called with an array[^1]. The elements of the array
 
 If the array contains primitive values, they are displayed in a column called "Values". This is true for strings, booleans, numbers and bigints.  The other primitives, i.e. symbol, null and undefined, are ignored. Non primitive values are objects. These objects have properties. Each property defines a column of the table and the property value of an row's object is the value in the column for that row. Columns values should be primitive values. More complex values are likely show as `"[object Object]"`. If they define a `toString()` function, the result of the `toString()` function will be used to show the object. **String values with newlines break the table layout**. To use multiline strings as values, first [`flatten` the table](#flatten). The [`flatten` function](#flatten) can also be used to replace objects that show as `"[object Object]"` with columns of their attributes.
 
-There is one special property called "**`ts:horizontalLine`**". If the "`ts:horizontalLine`" property is defined in the object for a row, e.g. `{ .... "ts:horizontalLine": true}`, an horizontal line is drawn after that row. 
+There are to special property called "**`ts:horizontalLine`**" and "**`ts:chalk`**". 
+
+If the "`ts:horizontalLine`" property is defined in the object for a row, e.g. `{ .... "ts:horizontalLine": true}`, an horizontal line is drawn after that row. 
+
+If the "`ts:chalk`" property is defined in the object for a row, e.g. `{ .... "ts:chalk": "\x1B[37m\x1B[40m\x1B[49m\x1B[39m"}`, this chalk is used for the row with precedence over [table chalks](#chalks) and [column chalks](#chalk). 
 
   
 
@@ -170,6 +175,7 @@ An entry of the columnOptions array defines up to 5 values for a column:
 * padding
 * align
 * alignHeading 
+* chalk
 Of these values, only the `name` is mandatory.
 
 If no column options are specified, the table shows all columns available in the underlying data. 
@@ -218,6 +224,14 @@ Possible values are `left`, `center`, and `right`. Sets the alignment for the va
 Possible values are `left`, `center`, and `right`. If the [`align` column option](#align) is defined, this will also align the heading. The option `alignHeading` allows a different alignment of the heading. 
 The default is `center` if not overridden by the [table option `alignTableHeadings`](#aligntableheadings).
 
+##### chalk
+
+A chalk for the table column, see the [section about table chalks](#chalks) for the format. A value given for the column takes precedence over `tableChalk`- 
+
+##### alternateChalk
+
+A chalk for every other row in the table column. A value given for the column takes precedence over `alternateTableChalk`.
+
 #### Shortened Notation
 
 Often, you do not need to specify all options for a column. For these cases, two abbreviations are supported:
@@ -231,7 +245,7 @@ All forms can be mixed: `[ { prop1: "Column Name" }, "prop2", { name: "prop3", a
 
 While column options refer to individual columns, there are a few options that affect the entire table: 
 * alignTableHeadings 
-* frameChalk, headerChalk, alternativeChalk
+* Table, frame, and header chalks
 * propertyCompareFunction
 * index
 
@@ -239,18 +253,24 @@ While column options refer to individual columns, there are a few options that a
 
 Possible values are `left`, `center`, and `right`. This overrides the default "center" alignment of column headings. The `align` and `alignHeading` values for individual columns take precedence over this option.
 
-#### frameChalk
+#### Chalks
 
-A string. Want an alternative color for the table's border? Just define a string value with opening and closing ANSI color escapes. 
-As an example: `{ frameChalk: "\x1B[37m\x1B[40m \x1B[49m\x1B[39m"}`
+`tableString`supports various options to color tables and their borders. The values for the options are strings with opening and closing ANSI color escapes.
 
-#### headerChalk
+For example: `{ tableChalk: "\x1B[37m\x1B[40m\x1B[49m\x1B[39m" }`
 
-Specific setting for the header rows. Default is frameChalk.
 
-#### alternativeChalk
+The options are:
 
-Alternative chalk for every second table row. Default is frameChalk.
+ Name | Purpose 
+--|--
+`tableChalk` | Chalk for the content of the table
+`alternateTableChalk`  | If defined, use this for every second row
+`frameChalk`| Chalk for the frame of the table
+`alternateFrameChalk` | If defined, use this for every second row
+`headerChalk` | Chalk for the header, defaults to `tableChalk`
+`headerFrameChalk` | Chalk for the tables frame in the header rows, defaults to `frameChalk` 
+
 
 #### propertyCompareFunction
 
@@ -264,7 +284,7 @@ An array of values. To add an index column, define values for that column. This 
 
 The examples for [the `index` table option](#index) also include an example for a computed option value: `[...data.keys()]` computes an index from the data array. There are other examples where using functions for option values greatly simplifies configuration and improves readability. 
 
-For example, [the table option `frameChalk`](#framechalk) could also be set with the chalk package as follows: `{ frameChalk: chalk.red.bgBlue("x") }`. Here the string itself is not important, but it should have a non-zero length. Otherwise, chalk optimizes the colors away.   
+For example, [the table option `tableChalk`](#chalks) could also be set with the chalk package as follows: `{ tableChalk: chalk.red.bgBlue("x") }`. Here the string itself is not important, but it should have a non-zero length. Otherwise, chalk optimizes the colors away.   
 
 As another example, if you just want the columns to show up in alphabetical order: \
 `tableString(data = [{ z: 3, y: 4, x:2 }]), [...Object.keys(data[0])].sort())` renders as

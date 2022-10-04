@@ -392,7 +392,7 @@ describe("tableString", function () {
       headerFrameChalk: chalk.bgHex("#ff6600").black(" "),
     }
   );
-  
+
   test(
     "Right alignment for values and headings",
     "┌───┬─────────┐\n" +
@@ -501,17 +501,26 @@ describe("tableString", function () {
     }
   );
   test(
-    "Object with toString()",
-    "┌────────┐\n" +
-      "│ person │\n" +
-      "├────────┤\n" +
-      "│ a b    │\n" +
-      "│ c d    │\n" +
-      "└────────┘",
-    flatten([
-      { person: new Person("a", "b") },
-      { person: new Person("c", "d") },
-    ])
+    "row chalk",
+    "┌───────────────────┬──────────────────┬──────────┐\n" +
+      "│ person.first name │ person.last name │ ts:chalk │\n" +
+      "├───────────────────┼──────────────────┼──────────┤\n" +
+      "│\x1B[48;2;68;68;68m\x1B[32m a                 \x1B[39m\x1B[49m│\x1B[48;2;68;68;68m\x1B[32m b                \x1B[39m\x1B[49m│\x1B[48;2;68;68;68m\x1B[32m\x1B[48;2;68;68;68m\x1B[32m          \x1B[39m\x1B[49m│\n" +
+      "│\x1B[48;2;51;51;51m\x1B[33m c                 \x1B[39m\x1B[49m│\x1B[48;2;51;51;51m\x1B[33m d                \x1B[39m\x1B[49m│\x1B[48;2;51;51;51m\x1B[33m\x1B[48;2;51;51;51m\x1B[33m          \x1B[39m\x1B[49m│\n" +
+      "└───────────────────┴──────────────────┴──────────┘",
+    flatten(
+      [
+        {
+          person: new Person2("a", "b"),
+          "ts:chalk": chalk.bgHex("#444444").green(" "),
+        },
+        {
+          person: new Person2("c", "d"),
+          "ts:chalk": chalk.bgHex("#333333").yellow(" "),
+        },
+      ],
+      Infinity
+    )
   );
   test(
     "alternate chalk 1",
