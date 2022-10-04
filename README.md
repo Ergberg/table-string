@@ -120,8 +120,6 @@ flatten([{ a: { b: "c" } }], 1) === [{ "a.b": "c" }] // nested object's property
 flatten([{ a: { b: { c: "d" } } }], 1) === [{ "a.b": { c: "d" } }] // only outer object is replaced with objectDepth === 1
 flatten([{ a: { b: { c: "d" } } }], 2) === [{ "a.b.c": "d" }] // also inner object is replaced with objectDepth === 2
 flatten([{ a: { b: "c" }, "a.b": "exists" }], 1) // Error: Flattening object at depth 1: property "a.b" already exists
-
-tableString(flatten([{host:}])
 ```
 
 ### frame.characters
