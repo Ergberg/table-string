@@ -187,59 +187,50 @@ The values are taken from the properties of the same name (from the objects that
 [^2]: Or shorter: `[ "firstName", "lastName" ]`, [see shortened notation](#shortened-notation) 
 
 
-##### name
+#### name
 
 A string. The `name` selects a single data column of the table. It is the name of this column. Possible values are the property names (keys) of the objects specified as table data. These include '0', '1', ... if the values in the data object are arrays. In addition, two special column names may exist: 
 
 * `"Values"` is the name of the column of primitive values. If the data object for the table is an array, this column contains all strings and numbers that are direct elements of this array. 
 * `""` is the name of the index column. Unlike `console.table()`, this column is not included by default. To add an index column, you must explicitly specify the values for the index column [using the `index` table option](#index).  
 
-##### heading
+#### heading
 
 A string. Sets the heading of the column. If not specified, the column name is used as the heading. 
 
-##### minWidth
+#### minWidth
 
 A positive integer. The minimal width of a column is derived from the heading and the widest values. The `width` option can be used to explicitly set a minimum width for the column.   
 
 
-##### maxWidth
+#### maxWidth
 
 A positive integer. If set, truncates too long output in this column to _n_ characters. It is an error to set `maxWidth` < `minWidth`. 
 
-##### width
+#### width
 
 A positive integer. Can be used as an abbreviation for setting `minWidth` and `maxWidth` to the same value.    
 
-##### padding 
+#### padding 
 
 A positive integer. Adds spaces to the left and to the right of a value in a column. Default is 1 space.
 
-##### align
+#### align
 
 Possible values are `left`, `center`, and `right`. Sets the alignment for the values of the column.  The default is `left` for most values. If no alignment is specified for the column, number values will be right aligned by default. This also affects how the heading of the column is aligned. If you want a different alignment for the column heading, use the [`alignHeading` column option](#alignheading). By default, column headings are all center aligned. This can  be changed globally with the [`alignTableHeadings` table option](#aligntableheadings).
 
-##### alignHeading
+#### alignHeading
 
 Possible values are `left`, `center`, and `right`. If the [`align` column option](#align) is defined, this will also align the heading. The option `alignHeading` allows a different alignment of the heading. 
 The default is `center` if not overridden by the [table option `alignTableHeadings`](#aligntableheadings).
 
-##### chalk
+#### chalk
 
 A chalk for the table column, see the [section about table chalks](#chalks) for the format. A value given for the column takes precedence over `tableChalk`- 
 
-##### alternateChalk
+#### alternateChalk
 
 A chalk for every other row in the table column. A value given for the column takes precedence over `alternateTableChalk`.
-
-#### Shortened Notation
-
-Often, you do not need to specify all options for a column. For these cases, two abbreviations are supported:
-
-* The tuple `{ column: "name", heading: "Column Heading" }` can be abbreviated to `{ name: "Column Heading" }`\ 
-* The `{ name: "prop2" }` object can be abbreviated to a single string "prop2".
-
-All forms can be mixed: `[ { prop1: "Column Name" }, "prop2", { name: "prop3", align: "center" } ]` 
 
 ### Table Options
 
@@ -279,6 +270,17 @@ A function. Normally, the data object for `tableString()` is an array. However, 
 #### index
 
 An array of values. To add an index column, define values for that column. This can look like this: `index: ["A", "B", "C"]` or `index: [...data.keys()]`. The column is named `""` (the empty string) and its heading is also `""`. You can change heading and alignment with a column option for `""`: `{ name: "", heading: "(index)", align: "right" }`.
+
+## Miscellaneous
+
+### Shortened Notation
+
+Often, you do not need to specify all options for a column. For these cases, two abbreviations are supported:
+
+* The tuple `{ column: "name", heading: "Column Heading" }` can be abbreviated to `{ name: "Column Heading" }`\ 
+* The `{ name: "prop2" }` object can be abbreviated to a single string "prop2".
+
+All forms can be mixed: `[ { prop1: "Column Name" }, "prop2", { name: "prop3", align: "center" } ]` 
 
 ### Using Functions in Options
 
