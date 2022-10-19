@@ -1,4 +1,23 @@
 import { ansiDestruct } from "./ansiDestruct.js";
+import { Alignment } from "../types.js"
+
+export function pad(
+  value: any,
+  minWidth: number,
+  maxWidth: number,
+  align: Alignment,
+  fill: string,
+  padding: number
+) {
+  switch (align) {
+    case "center":
+      return padBoth(value, minWidth, maxWidth, fill, padding);
+    case "right":
+      return padStart(value, minWidth, maxWidth, fill, padding);
+    default:
+      return padEnd(value, minWidth, maxWidth, fill, padding);
+  }
+}
 
 export function padEnd(
   value: any,

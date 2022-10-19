@@ -27,7 +27,7 @@ describe("tableString", function () {
   test("Null", "", null);
   test(
     "frameChalk",
-    "\x1B[37m\x1B[40m┌──┐\x1B[49m\x1B[39m\n\x1B[37m\x1B[40m└──┘\x1B[49m\x1B[39m",
+    "\x1B[37m\x1B[40m┌──┐\x1B[39m\x1B[49m\n\x1B[37m\x1B[40m└──┘\x1B[39m\x1B[49m",
     [],
     [{ Values: "" }],
     {
@@ -134,9 +134,9 @@ describe("tableString", function () {
     "┌───────────┬──────────┐\n" +
       "│ firstName │ lastName │\n" +
       "├───────────┼──────────┤\n" +
-      "│\x1B[44m\x1B[37m John      \x1B[39m\x1B[49m│\x1B[100m\x1B[37m Smith    \x1B[39m\x1B[49m│\n" +
-      "│\x1B[47m\x1B[32m Jane      \x1B[39m\x1B[49m│\x1B[40m\x1B[33m Doe      \x1B[39m\x1B[49m│\n" +
-      "│\x1B[44m\x1B[37m Emily     \x1B[39m\x1B[49m│\x1B[100m\x1B[37m Jones    \x1B[39m\x1B[49m│\n" +
+      "│\x1B[37m\x1B[44m John      \x1B[39m\x1B[49m│\x1B[37m\x1B[100m Smith    \x1B[39m\x1B[49m│\n" +
+      "│\x1B[32m\x1B[47m Jane      \x1B[39m\x1B[49m│\x1B[33m\x1B[40m Doe      \x1B[39m\x1B[49m│\n" +
+      "│\x1B[37m\x1B[44m Emily     \x1B[39m\x1B[49m│\x1B[37m\x1B[100m Jones    \x1B[39m\x1B[49m│\n" +
       "└───────────┴──────────┘",
     [
       new Person("John", "Smith"),
@@ -378,12 +378,12 @@ describe("tableString", function () {
 
   test(
     "Colorful content",
-    "\u001b[48;2;255;102;0m\u001b[30m┌────────────┬──────────────┐\u001b[39m\u001b[49m\n\u001b[48;2;255;102;0m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;255;170;0m\u001b[30m Price in $ \u001b[39m\u001b[49m\u001b[48;2;255;102;0m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;255;170;0m\u001b[30m    Fruit     \u001b[39m\u001b[49m\u001b[48;2;255;102;0m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;255;102;0m\u001b[30m├────────────┼──────────────┤\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m       1.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[32m Apples       \u001b[39m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m       3.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[31m Strawberries \u001b[39m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m       0.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[44m\u001b[33m Bananas      \u001b[39m\u001b[49m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m      12.99 \u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m\u001b[48;2;255;255;255m Bilberries   \u001b[49m\u001b[39m\u001b[49m\u001b[48;2;221;221;187m\u001b[30m│\u001b[39m\u001b[49m\n\u001b[48;2;221;221;187m\u001b[30m└────────────┴──────────────┘\u001b[39m\u001b[49m",
+    "\u001b[30m\u001b[48;2;255;102;0m┌────────────┬──────────────┐\u001b[39m\u001b[49m\n\u001b[30m\u001b[48;2;255;102;0m│\u001b[48;2;255;170;0m Price in $ \u001b[48;2;255;102;0m│\u001b[48;2;255;170;0m    Fruit     \u001b[48;2;255;102;0m│\u001b[39m\u001b[49m\n\u001b[30m\u001b[48;2;255;102;0m├────────────┼──────────────┤\u001b[39m\u001b[49m\n\u001b[30m\u001b[48;2;221;221;187m│       0.99 │\u001b[33m\u001b[44m Bananas      \u001b[30m\u001b[48;2;221;221;187m│\u001b[39m\u001b[49m\n\u001b[30m\u001b[48;2;221;221;187m│      12.99 │\u001b[48;2;255;255;255m Bilberries   \u001b[48;2;221;221;187m│\u001b[39m\u001b[49m\n\u001b[30m\u001b[48;2;221;221;187m│       1.99 │\u001b[32m Apples       \u001b[30m│\u001b[39m\u001b[49m\n\u001b[30m\u001b[48;2;221;221;187m│       3.99 │\u001b[31m Strawberries \u001b[30m│\u001b[39m\u001b[49m\n\u001b[30m\u001b[48;2;221;221;187m└────────────┴──────────────┘\u001b[39m\u001b[49m",
     (data = [
-      { price: 1.99, fruit: chalk.green("Apples") },
-      { price: 3.99, fruit: chalk.red("Strawberries") },
       { price: 0.99, fruit: chalk.bgBlue.yellow("Bananas") },
       { price: 12.99, fruit: chalk.bgHex("#ffffff")("Bilberries") },
+      { price: 1.99, fruit: chalk.green("Apples") },
+      { price: 3.99, fruit: chalk.red("Strawberries") },
     ]),
     [{ price: "Price in $" }, { fruit: "Fruit" }],
     {
@@ -502,12 +502,12 @@ describe("tableString", function () {
   );
   test(
     "row chalk",
-    "┌───────────────────┬──────────────────┬──────────┐\n" +
-      "│ person.first name │ person.last name │ ts:chalk │\n" +
-      "├───────────────────┼──────────────────┼──────────┤\n" +
-      "│\x1B[48;2;68;68;68m\x1B[32m a                 \x1B[39m\x1B[49m│\x1B[48;2;68;68;68m\x1B[32m b                \x1B[39m\x1B[49m│\x1B[48;2;68;68;68m\x1B[32m\x1B[48;2;68;68;68m\x1B[32m          \x1B[39m\x1B[49m│\n" +
-      "│\x1B[48;2;51;51;51m\x1B[33m c                 \x1B[39m\x1B[49m│\x1B[48;2;51;51;51m\x1B[33m d                \x1B[39m\x1B[49m│\x1B[48;2;51;51;51m\x1B[33m\x1B[48;2;51;51;51m\x1B[33m          \x1B[39m\x1B[49m│\n" +
-      "└───────────────────┴──────────────────┴──────────┘",
+    "┌───────────────────┬──────────────────┐\n" +
+      "│ person.first name │ person.last name │\n" +
+      "├───────────────────┼──────────────────┤\n" +
+      "│\x1B[32m\x1B[48;2;68;68;68m a                 \x1B[39m\x1B[49m│\x1B[32m\x1B[48;2;68;68;68m b                │\n" +
+      "│\x1B[33m\x1B[48;2;51;51;51m c                 \x1B[39m\x1B[49m│\x1B[33m\x1B[48;2;51;51;51m d                │\n" +
+      "└───────────────────┴──────────────────┘",
     flatten(
       [
         {
@@ -528,9 +528,9 @@ describe("tableString", function () {
       "│ Values │\n" +
       "├────────┤\n" +
       "│      1 │\n" +
-      "│\x1B[44m\x1B[37m      2 \x1B[39m\x1B[49m│\n" +
+      "│\x1B[37m\x1B[44m      2 \x1B[39m\x1B[49m│\n" +
       "│      3 │\n" +
-      "│\x1B[44m\x1B[37m      4 \x1B[39m\x1B[49m│\n" +
+      "│\x1B[37m\x1B[44m      4 \x1B[39m\x1B[49m│\n" +
       "└────────┘",
     [1, 2, 3, 4],
     undefined,
@@ -544,9 +544,9 @@ describe("tableString", function () {
       "│ Values │\n" +
       "├────────┤\n" +
       "│      1 │\n" +
-      "\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\x1B[44m\x1B[37m      2 \x1B[39m\x1B[49m\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[37m\x1B[44m│      2 │\x1B[39m\x1B[49m\n" +
       "│      3 │\n" +
-      "\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\x1B[44m\x1B[37m      4 \x1B[39m\x1B[49m\x1B[44m\x1B[37m│\x1B[39m\x1B[49m\n" +
+      "\x1B[37m\x1B[44m│      4 │\x1B[39m\x1B[49m\n" +
       "└────────┘",
     [1, 2, 3, 4],
     undefined,

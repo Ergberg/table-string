@@ -1,8 +1,9 @@
 import { init } from "./state/tableState.js";
 import { genTable } from "./genTable.js";
 import { frame } from "./frame.js";
-import { AbbreviatedColumnOptions, ColumnOptions, TableOptions } from "./types.js";
+import { AbbreviatedColumnOptions, TableOptions } from "./types.js";
 import { abbreviated } from "./abbreviations.js";
+import { cleanUp } from "./cleanUp.js";
 
 /**
  * A function that converts objects into a string that prints out as a table.
@@ -24,9 +25,8 @@ export function tableString(
   }
 
   init(data, abbreviated(columnOptions), tableOptions);
-  return genTable(data, frame.characters);
+  return cleanUp(genTable(data, frame.characters));
 }
-
 
 function recurseWithArrayFromObject(
   data: object,

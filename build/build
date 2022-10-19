@@ -1,0 +1,14 @@
+#! /bin/sh
+
+HERE=$(dirname $(dirname $(readlink -f $0)))
+echo ${HERE}
+
+DIST=${HERE}/dist
+INST=${HERE}/instrumented
+
+rm -rf ${DIST} ${INST}
+
+npx tsc
+echo "aux" > ${DIST}/.npmignore
+
+npx nyc instrument ${DIST} ${INST}

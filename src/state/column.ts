@@ -1,4 +1,4 @@
-import { TS_HORIZONTAL_LINE } from "./../constants.js";
+import { TS_CHALK, TS_HORIZONTAL_LINE } from "./../constants.js";
 import { Chalk, ColumnOption, ColumnOptions } from "../types.js";
 import { ansiDestruct } from "../util/ansiDestruct.js";
 import { options } from "./tableState.js";
@@ -65,7 +65,10 @@ export function has(columns: ColumnOptions, key: string) {
 function keyVisibilityFilter() {
   return (obj: object) => {
     const res = [...Object.keys(obj)].filter(
-      (k) => k !== TS_HORIZONTAL_LINE && typeof obj[k] !== "function"
+      (k) =>
+        k !== TS_HORIZONTAL_LINE &&
+        k !== TS_CHALK &&
+        typeof obj[k] !== "function"
     );
     return res;
   };

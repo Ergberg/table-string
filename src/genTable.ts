@@ -1,9 +1,10 @@
-import { padBoth, padEnd, padStart } from "./util/padding.js";
+import { pad } from "./util/padding.js";
 import { chalk, header, options, primitives } from "./state/tableState.js";
 import { value } from "./util/value.js";
 import { Alignment, Chalk } from "./types.js";
 import { TS_CHALK, TS_HORIZONTAL_LINE } from "./constants.js";
 import { ansiDestruct } from "./util/ansiDestruct.js";
+import { basedOnType } from "./util/basedOnType.js";
 
 export function genTable(
   data: object[],
@@ -27,7 +28,7 @@ function genRow(
   rowIndex: number,
   row?: object
 ): string {
-  const [first, fill, separator, end] = kind.split("");
+  const [first, fill, separator, end] = [...kind];
 
   let rowChalk: Chalk;
   const ansis = ansiDestruct(row?.[TS_CHALK]);
@@ -54,7 +55,7 @@ function genRow(
           val,
           columnOption.minWidth,
           columnOption.maxWidth,
-          alignment,
+          basedOnType(alignment, val),
           fill,
           columnOption.padding
         ) +
@@ -132,28 +133,3 @@ function genRow(
   }
 }
 
-function pad(
-  value: any,
-  minWidth: number,
-  maxWidth: number,
-  align: Alignment,
-  fill: string,
-  padding: number
-) {
-  align = basedOnType(align, value);
-  switch (align) {
-    case "center":
-      return padBoth(value, minWidth, maxWidth, fill, padding);
-    case "right":
-      return padStart(value, minWidth, maxWidth, fill, padding);
-    default:
-      return padEnd(value, minWidth, maxWidth, fill, padding);
-  }
-}
-
-export function basedOnType(align: Alignment, value: any) {
-  if (align === undefined || align === null || align === "based on type")
-    align =
-      typeof value === "number" || typeof value === "bigint" ? "right" : "left";
-  return align;
-}

@@ -1,6 +1,6 @@
-import ansiRegex from "ansi-regex";
-import { basedOnType } from "../genTable.js";
 import { Alignment } from "../types.js";
+import { basedOnType } from "./basedOnType.js";
+import ansiRegex from "ansi-regex";
 const ansi = `(${ansiRegex().source})`;
 export type Parts = {
   width: number;
@@ -53,8 +53,8 @@ export function ansiDestruct(
   function shortenRight() {
     let cnt = 0;
     for (let k = i; k <= j; k += 2) {
-      if ((cnt += ansis[k].length) > (maxWidth ?? Infinity)) {
-        ansis[k] = ansis[k].slice(0, maxWidth - cnt);
+      if ((cnt += [...ansis[k]].length) > (maxWidth ?? Infinity)) {
+        ansis[k] = [...ansis[k]].slice(0, maxWidth - cnt).join("");
         dotRight(k, dots);
         while ((k += 2) <= j) {
           ansis[k] = "";
@@ -67,8 +67,8 @@ export function ansiDestruct(
   function shortenLeft() {
     let cnt = 0;
     for (let k = j; k >= i; k -= 2) {
-      if ((cnt += ansis[k].length) > (maxWidth ?? Infinity)) {
-        ansis[k] = ansis[k].slice(cnt - maxWidth);
+      if ((cnt += [...ansis[k]].length) > (maxWidth ?? Infinity)) {
+        ansis[k] = [...ansis[k]].slice(cnt - maxWidth).join("");
         dotLeft(k, dots);
         while ((k -= 2) >= i) {
           ansis[k] = "";
@@ -80,7 +80,7 @@ export function ansiDestruct(
 
   function shortenBoth() {
     let cnt = 0;
-    for (let k = i; k <= j; k += 2) cnt += ansis[k].length;
+    for (let k = i; k <= j; k += 2) cnt += [...ansis[k]].length;
     const tooMuch = cnt - (maxWidth ?? Infinity);
     if (tooMuch > 0) {
       const originalMaxWidth = maxWidth;
